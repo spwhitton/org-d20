@@ -29,7 +29,8 @@
 ;;; Commentary:
 
 ;;; A minor mode intended for use in an Org-mode file in which you are
-;;; keeping your GM notes for a d20 game.
+;;; keeping your GM notes for a tabletop roleplaying game that uses a
+;;; d20.
 
 ;;; Example file footer:
 ;;;
@@ -38,7 +39,7 @@
 ;;;     # org-d20-party: (("Zahrat" . 2) ("Ennon" . 4) ("Artemis" . 5))
 ;;;     # End:
 ;;;
-;;; Example first line of file:
+;;; Alternatively, example first line of file:
 ;;;
 ;;;     # -*- mode: org; mode: org-d20; org-d20-party: (("Zahrat" . 0) ("Anca" . 1)) -*-
 
