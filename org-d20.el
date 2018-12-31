@@ -60,6 +60,7 @@
     (define-key map (kbd "<f9>") 'org-d20-initiative-dwim)
     (define-key map (kbd "S-<f9>") 'org-d20-initiative-add)
     (define-key map (kbd "<f10>") 'org-d20-damage)
+    (define-key map (kbd "S-<f10>") 'org-d20-roll-at-point)
     (define-key map (kbd "<f11>") 'org-d20-roll)
     (define-key map (kbd "S-<f11>") 'org-d20-roll-last)
     (define-key map (kbd "<f12>") 'org-d20-d20)
@@ -300,6 +301,12 @@ the best N of them, e.g., 4d6k3."
     (if (>= k 0)
         (concat "+" (int-to-string k))
       (int-to-string k))))
+
+(defun org-d20-roll-at-point ()
+  "Roll the dice expression at point and display result in minibuffer."
+  (interactive)
+  (let ((exp (thing-at-point 'sexp t)))
+    (org-d20-roll exp)))
 
 ;;;###autoload
 (define-minor-mode org-d20-mode

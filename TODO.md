@@ -2,7 +2,6 @@ Soon
 ----
 
 - Dice expression roller shows results for each die
-- Function to roll the dice expression at point
 - Option to use letters, rather than digits, to individuate monsters
 - Option to continue numbering/lettering between types of monsters
     - So there is exactly one monster with a given digit/letter
