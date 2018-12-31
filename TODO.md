@@ -1,7 +1,9 @@
 Soon
 ----
 
-Dice expression roller shows results for each die
+- Dice expression roller shows results for each die
+
+- Function to roll the dice expression at point
 
 Maybe
 -----
