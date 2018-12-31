@@ -52,8 +52,7 @@
 (defcustom org-d20-party nil
   "Party initiative modifiers.")
 
-(defcustom org-d20-dice-sound
-  "~/lib/annex/doc/sounds/147531__ziembee__diceland.wav"
+(defcustom org-d20-dice-sound nil
   "Path to a sound file that `play-sound-file' can play.")
 
 (defvar org-d20-mode-map

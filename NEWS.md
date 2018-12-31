@@ -2,6 +2,7 @@
 ----------------
 
 - First public release.
+- Remove hardcoded path to my dice rolling wav.
 
 0.1 (2017)
 ----------
