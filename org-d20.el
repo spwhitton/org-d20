@@ -1,4 +1,4 @@
-;;; spwd20.el --- minor mode for d20 tabletop roleplaying games
+;;; org-d20.el --- minor mode for tabletop roleplaying games that use a d20
 
 ;; Copyright (C) 2017  Sean Whitton
 
@@ -34,13 +34,13 @@
 ;;; Example file footer:
 ;;;
 ;;;     # Local Variables:
-;;;     # eval: (spwd20-mode 1)
-;;;     # spwd20-party: (("Zahrat" . 2) ("Ennon" . 4) ("Artemis" . 5))
+;;;     # eval: (org-d20-mode 1)
+;;;     # org-d20-party: (("Zahrat" . 2) ("Ennon" . 4) ("Artemis" . 5))
 ;;;     # End:
 ;;;
 ;;; Example first line of file:
 ;;;
-;;;     # -*- mode: org; mode: spwd20; spwd20-party: (("Zahrat" . 0) ("Anca" . 1)) -*-
+;;;     # -*- mode: org; mode: org-d20; org-d20-party: (("Zahrat" . 0) ("Anca" . 1)) -*-
 
 ;;; TODO dice expression roller shows results for each die
 
@@ -55,35 +55,35 @@
 (require 'seq)
 (require 'dash)
 
-(defcustom spwd20-party nil
+(defcustom org-d20-party nil
   "Party initiative modifiers.")
 
-(defcustom spwd20-dice-sound
+(defcustom org-d20-dice-sound
   "~/lib/annex/doc/sounds/147531__ziembee__diceland.wav"
   "Path to a sound file that `play-sound-file' can play.")
 
-(defvar spwd20-mode-map
+(defvar org-d20-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "<f9>") 'spwd20-initiative-dwim)
-    (define-key map (kbd "S-<f9>") 'spwd20-initiative-add)
-    (define-key map (kbd "<f10>") 'spwd20-damage)
-    (define-key map (kbd "<f11>") 'spwd20-roll)
-    (define-key map (kbd "S-<f11>") 'spwd20-roll-last)
-    (define-key map (kbd "<f12>") 'spwd20-d20)
-    (define-key map (kbd "S-<f12>") 'spwd20-d%)
+    (define-key map (kbd "<f9>") 'org-d20-initiative-dwim)
+    (define-key map (kbd "S-<f9>") 'org-d20-initiative-add)
+    (define-key map (kbd "<f10>") 'org-d20-damage)
+    (define-key map (kbd "<f11>") 'org-d20-roll)
+    (define-key map (kbd "S-<f11>") 'org-d20-roll-last)
+    (define-key map (kbd "<f12>") 'org-d20-d20)
+    (define-key map (kbd "S-<f12>") 'org-d20-d%)
     map)
-  "Keymap for `spwd20-mode'.")
+  "Keymap for `org-d20-mode'.")
 
-(defun spwd20--roll (exp)
+(defun org-d20--roll (exp)
   "Evaluate dice roll expression EXP.
 
 Accepts roll20's extension for rolling multiple dice and keeping
 the best N of them, e.g., 4d6k3."
   (let ((exps (seq-map (lambda (s) (s-chop-prefix "+" s))
                        (s-slice-at "[+-]" exp))))
-    (-sum (seq-map 'spwd20--roll-inner exps))))
+    (-sum (seq-map 'org-d20--roll-inner exps))))
 
-(defun spwd20--roll-inner (exp)
+(defun org-d20--roll-inner (exp)
   (let* ((sign (if (s-prefix-p "-" exp) -1 1))
          (ours (let ((chopped (s-chop-prefix "-" exp)))
                  (if (string= (substring chopped 0 1) "d")
@@ -105,7 +105,7 @@ the best N of them, e.g., 4d6k3."
               (seq-drop (sort rolls '<) (- times keep))
             rolls))))))
 
-(defun spwd20-initiative ()
+(defun org-d20-initiative ()
   "Generates an Org-mode table with initiative order and monster HP."
   (interactive "*")
   (let ((rows))
@@ -121,22 +121,22 @@ the best N of them, e.g., 4d6k3."
          ;; initiative
          ;; TODO defcustom to toggle this for other editions
          (let ((init (int-to-string
-                      (spwd20--roll (concat
+                      (org-d20--roll (concat
                                      "1d20"
-                                     (spwd20--num-to-term init-input)))))
+                                     (org-d20--num-to-term init-input)))))
                (monster num-input))
            (while (>= monster 1)
-             (let ((hp (int-to-string (spwd20--roll hd-input))))
+             (let ((hp (int-to-string (org-d20--roll hd-input))))
                (push (list
                       "" (concat name-input " " (int-to-string monster))
-                      (spwd20--num-to-term init-input) init hp "0")
+                      (org-d20--num-to-term init-input) init hp "0")
                      rows))
              (setq monster (1- monster)))))
        while (-all? (lambda (x) (> (length x) 0))
                     (list name-input init-input hd-input))))
-    (dolist (pc spwd20-party)
+    (dolist (pc org-d20-party)
       (let ((init (read-string (concat (car pc) "'s initiative roll: "))))
-        (push (list "" (car pc) (spwd20--num-to-term (cdr pc)) init "-" "-")
+        (push (list "" (car pc) (org-d20--num-to-term (cdr pc)) init "-" "-")
               rows)))
     (insert
      "Round of combat: 1\n|Turn|Creature|Mod|Init|HP|Damage|Status|\n|-\n")
@@ -152,7 +152,7 @@ the best N of them, e.g., 4d6k3."
     (insert ">>>>")                     ; four chars in 'Turn'
     (org-table-align)))
 
-(defun spwd20-initiative-advance ()
+(defun org-d20-initiative-advance ()
   "Advance the turn tracker in an initiative table."
   (interactive "*")
   (when (org-at-table-p)
@@ -181,7 +181,7 @@ the best N of them, e.g., 4d6k3."
              (looking-at "~"))))
   (org-table-align))
 
-(defun spwd20-damage (dmg)
+(defun org-d20-damage (dmg)
   "Apply damage to the monster/NPC in the initiative table row at point."
   (interactive "*nDamage dealt: ")
   (when (org-at-table-p)
@@ -216,28 +216,28 @@ the best N of them, e.g., 4d6k3."
   (forward-char -2)
   (skip-chars-backward " "))
 
-(defun spwd20-roll (exp)
+(defun org-d20-roll (exp)
   "Prompt, evaluate and display dice roll expression EXP.
 
 Accepts roll20's extension for rolling multiple dice and keeping
 the best N of them, e.g., 4d6k3."
   (interactive "sRoll: ")
-  (setq spwd20-roll--last exp)
-  (message "%s = %s" exp (int-to-string (spwd20--roll exp)))
-  (when spwd20-dice-sound
-    (play-sound-file spwd20-dice-sound)))
+  (setq org-d20-roll--last exp)
+  (message "%s = %s" exp (int-to-string (org-d20--roll exp)))
+  (when org-d20-dice-sound
+    (play-sound-file org-d20-dice-sound)))
 
-(defun spwd20-roll-last ()
+(defun org-d20-roll-last ()
   (interactive)
-  (if (boundp 'spwd20-roll--last)
-      (spwd20-roll spwd20-roll--last)
-    (call-interactively 'spwd20-roll)))
+  (if (boundp 'org-d20-roll--last)
+      (org-d20-roll org-d20-roll--last)
+    (call-interactively 'org-d20-roll)))
 
-(defun spwd20-d20 ()
+(defun org-d20-d20 ()
   "Roll two d20, showing result with advantage and disadvantage, and with neither."
   (interactive)
-  (let* ((fst (spwd20--roll "1d20"))
-         (snd (spwd20--roll "1d20"))
+  (let* ((fst (org-d20--roll "1d20"))
+         (snd (org-d20--roll "1d20"))
          (fst* (int-to-string fst))
          (snd* (int-to-string snd))
          (adv (if (>= fst snd)
@@ -248,22 +248,22 @@ the best N of them, e.g., 4d6k3."
                    (concat fst* "  " (propertize snd* 'face 'bold)))))
     (message "No adv./disadv.:  %s\tAdv.:  %s\tDisadv.:  %s"
              fst* adv disadv))
-  (when spwd20-dice-sound
-    (play-sound-file spwd20-dice-sound)))
+  (when org-d20-dice-sound
+    (play-sound-file org-d20-dice-sound)))
 
-(defun spwd20-d% ()
+(defun org-d20-d% ()
   "Roll a percentile dice."
   (interactive)
-  (spwd20-roll "1d100"))
+  (org-d20-roll "1d100"))
 
-(defun spwd20-initiative-dwim ()
+(defun org-d20-initiative-dwim ()
   "Start a new combat or advance the turn tracker, based on point."
   (interactive "*")
   (if (org-at-table-p)
-      (spwd20-initiative-advance)
-    (spwd20-initiative)))
+      (org-d20-initiative-advance)
+    (org-d20-initiative)))
 
-(defun spwd20-initiative-add ()
+(defun org-d20-initiative-add ()
   "Add a monster to an existing combat."
   (interactive "*")
   (if (org-at-table-p)
@@ -278,9 +278,9 @@ the best N of them, e.g., 4d6k3."
           (org-table-goto-line (1+ (org-table-current-line)))
           (org-table-goto-line (1+ (org-table-current-line)))
           (let ((init (int-to-string
-                       (spwd20--roll (concat
-                                      "1d20"
-                                      (spwd20--num-to-term init-input)))))
+                       (org-d20--roll (concat
+                                       "1d20"
+                                       (org-d20--num-to-term init-input)))))
                 (monster num-input))
             (while (>= monster 1)
               (org-table-insert-row)
@@ -289,30 +289,30 @@ the best N of them, e.g., 4d6k3."
               (insert " ")
               (insert (int-to-string monster))
               (org-table-next-field)
-              (insert (spwd20--num-to-term init-input))
+              (insert (org-d20--num-to-term init-input))
               (org-table-next-field)
               (insert init)
               (org-table-next-field)
-              (insert (int-to-string (spwd20--roll hd-input)))
+              (insert (int-to-string (org-d20--roll hd-input)))
               (org-table-next-field)
               (insert "0")
               (setq monster (1- monster))))
           (org-table-goto-column 4)
           (org-table-sort-lines nil ?N)
           (org-table-align)))
-    (spwd20-initiative)))
+    (org-d20-initiative)))
 
-(defun spwd20--num-to-term (n)
+(defun org-d20--num-to-term (n)
   (let ((k (if (stringp n) (string-to-int n) n)))
     (if (>= k 0)
         (concat "+" (int-to-string k))
       (int-to-string k))))
 
 ;;;###autoload
-(define-minor-mode spwd20-mode
+(define-minor-mode org-d20-mode
   "Bind convenience functions for running a d20-like game in an
 Org-mode document."
   :lighter " d20")
 
-(provide 'spwd20)
-;;; spwd20.el ends here
+(provide 'org-d20)
+;;; org-d20.el ends here
