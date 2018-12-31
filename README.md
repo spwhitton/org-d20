@@ -6,8 +6,8 @@ org-d20 is a minor mode for Emacs' [Org-mode](https://orgmode.org/)
 for GMs running games whose rules centre around rolling d20s.  It
 should be useful for *Dungeons and Dragons* 3rd, 4th and 5th editions,
 Paizo's *Pathfinder*, and
-[d20 System](https://en.wikipedia.org/wiki/D20_System) games like d20
-Modern.
+[d20 System](https://en.wikipedia.org/wiki/D20_System) games like *d20
+Modern*.
 
 The idea is that you're already keeping your campaign notes in an
 Org-mode file.  This minor mode does useful things for you while you
