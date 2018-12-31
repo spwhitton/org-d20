@@ -1,13 +1,13 @@
 ;;; org-d20.el --- minor mode for tabletop roleplaying games that use a d20
 
-;; Copyright (C) 2017  Sean Whitton
+;; Copyright (C) 2017-2018  Sean Whitton
 
 ;; Author: Sean Whitton <spwhitton@spwhitton.name>
 ;; URL:
-;; Version: 0.1
-;; Package-Version: 0.1
+;; Version: 0.2
+;; Package-Version: 0.2
 ;; Package-Requires: (s seq dash)
-;; Keywords:
+;; Keywords: roleplaying
 
 ;; This file is NOT part of GNU Emacs.
 
