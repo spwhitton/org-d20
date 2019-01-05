@@ -156,17 +156,17 @@ the best N of them, e.g., 4d6k3."
        (when (> (length name-input) 0)
          (setq init-input (read-string (concat name-input "'s init modifier: "))
                hd-input (read-string (concat name-input "'s hit points: "))
-               num-input (string-to-int
-                          (read-string (concat "How many " name-input "? "))))
+               num-input (cdr (org-d20--roll
+                               (read-string (concat "How many " name-input "? ")))))
          ;; in 5e, all monsters of the same kind have the same
          ;; initiative
          (let ((init (int-to-string
-                      (org-d20--roll (concat
-                                      "1d20"
-                                      (org-d20--num-to-term init-input)))))
+                      (cdr (org-d20--roll (concat
+                                           "1d20"
+                                           (org-d20--num-to-term init-input))))))
                (monsters-left num-input))
            (while (>= monsters-left 1)
-             (let ((hp (int-to-string (org-d20--roll hd-input))))
+             (let ((hp (int-to-string (cdr (org-d20--roll hd-input)))))
                (push (list
                       "" (concat name-input
                                  " "
@@ -331,8 +331,9 @@ the best N of them, e.g., 4d6k3."
       (let* ((name-input (read-string "Monster/NPC name: "))
              (init-input (read-string (concat name-input "'s init modifier: ")))
              (hd-input (read-string (concat name-input "'s hit points: ")))
-             (num-input (string-to-int
-                         (read-string (concat "How many " name-input "? "))))
+             (num-input
+              (cdr (org-d20--roll
+                    (read-string (concat "How many " name-input "? ")))))
              (monster 1))
         ;; first, if we need to, try to count the number of monsters.
         ;; We can only use a crude heuristic here because we don't
