@@ -20,8 +20,13 @@ are visiting that buffer.  For example,
   description of the monsters and the terrain.
   
 The minor mode's defaults suit the way that I run D&D 5e.  Patches to
-add `defcustoms` to make org-d20 more suitable for other games and
-other sets of house rules are welcome.
+add `defcustoms` to make org-d20 more suitable for other games, and
+other sets of house rules, are welcome.
+
+## Installation ##
+
+Presently manual.  I hope to make org-d20 available from a popular
+online repository soon.
 
 ## Usage ##
 
@@ -33,13 +38,30 @@ modifiers, if you want to use org-d20's combat tracker.
 You can either end the Org-file with a footer like this:
 
      # Local Variables:
-     # eval: (org-d20-mode 1)
+     # mode: org
+     # mode: org-d20
      # org-d20-party: (("Zahrat" . 2) ("Ennon" . 4) ("Artemis" . 5))
      # End:
 
 or start it with a first line like this:
 
     # -*- mode: org; mode: org-d20; org-d20-party: (("Zahrat" . 0) ("Anca" . 1)) -*-
+
+Then close and reopen the file.  Emacs will probably ask you to
+confirm that the value for org-d20-party that you've supplied is safe.
+
+The following bindings should then be available:
+
+- <kbd><f9></kbd> -- start a combat, or advance the turn/round counter
+  for an existing combat, depending on point
+- <kbd>S-<f9></kbd> -- add new monsters to an existing combat
+- <kbd><f10></kbd> -- apply damage to the monster at point
+- <kbd>S-<f10></kbd> -- evaluate the dice expression (e.g. `4d10`) at
+  point
+- <kbd><f11></kbd> -- prompt for dice expression and evaluate it
+- <kbd>S-<f11></kbd> -- roll the last dice expression again
+- <kbd><f12></kbd> -- roll d20, with advantage and disadvantage shown
+- <kbd>S-<f12></kbd> -- roll percentile dice
 
 ## Bugs/patches ##
 

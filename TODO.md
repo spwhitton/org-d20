@@ -1,7 +1,6 @@
 Soon
 ----
 
-- Much more detail in README.md for new users
 - Dice expression roller shows results for each die
 - [Submit to MELPA](https://github.com/melpa/melpa/blob/master/CONTRIBUTING.org#making-your-package-ready-for-inclusion)
 
