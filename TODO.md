@@ -1,8 +1,6 @@
 Soon
 ----
 
-- Screenshot from my live notes
-- Page on my website
 - [Submit to MELPA](https://github.com/melpa/melpa/blob/master/CONTRIBUTING.org#making-your-package-ready-for-inclusion)
 
 Features

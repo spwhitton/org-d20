@@ -23,6 +23,10 @@ The minor mode's defaults suit the way that I run D&D 5e.  Patches to
 add `defcustoms` to make org-d20 more suitable for other games, and
 other sets of house rules, are welcome.
 
+## Screenshot ##
+
+![screenshot](https://spwhitton.name/img/org-d20-0.3pre.png)
+
 ## Installation ##
 
 Presently manual.  I hope to make org-d20 available from a popular
