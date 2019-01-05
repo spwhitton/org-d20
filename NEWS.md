@@ -1,6 +1,7 @@
 0.3 (unreleased)
 ----------------
 
+- `org-d20-roll` shows the results on each dice rolled
 - New defcustom, `org-d20-letter-monsters`
 - New defcustom, `org-d20-continue-monster-numbering`
 - Improve README for new users

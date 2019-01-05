@@ -81,33 +81,69 @@
 (defun org-d20--roll (exp)
   "Evaluate dice roll expression EXP.
 
+Returns a cons cell, whose car is a string expressing the results
+on each dice rolled, and whose cdr is the final result.
+
 Accepts roll20's extension for rolling multiple dice and keeping
 the best N of them, e.g., 4d6k3."
   (let ((exps (seq-map (lambda (s) (s-chop-prefix "+" s))
                        (s-slice-at "[+-]" exp))))
-    (-sum (seq-map 'org-d20--roll-inner exps))))
+    (seq-reduce #'org-d20--roll-inner exps '("" . 0))))
 
-(defun org-d20--roll-inner (exp)
-  (let* ((sign (if (s-prefix-p "-" exp) -1 1))
-         (ours (let ((chopped (s-chop-prefix "-" exp)))
-                 (if (string= (substring chopped 0 1) "d")
-                     (concat "1" chopped) chopped)))
-         (split (seq-map 'string-to-int (s-split "[dk]" ours)))
-         (times (seq-elt split 0))
-         (sides (ignore-errors (seq-elt split 1)))
-         (keep (ignore-errors (seq-elt split 2)))
-         (rolls))
-    (* sign
-       (if (not sides)
-           times
-         (while (> times 0)
-           (let ((roll (1+ (random (- sides 1)))))
-             (push roll rolls))
-           (setq times (- times 1)))
-         (-sum
-          (if keep
-              (seq-drop (sort rolls '<) (- times keep))
-            rolls))))))
+(defun org-d20--roll-inner (accum exp)
+  (-let* (((rolls . total) accum)
+          (sign (if (s-prefix-p "-" exp) -1 1))
+          (ours (let ((chopped (s-chop-prefix "-" exp)))
+                  (if (string= (substring chopped 0 1) "d")
+                      (concat "1" chopped) chopped)))
+          (split (seq-map 'string-to-int (s-split "[dk]" ours)))
+          (times (seq-elt split 0))
+          (sides (ignore-errors (seq-elt split 1)))
+          (keep (ignore-errors (seq-elt split 2)))
+          (new-rolls))
+    (if (not sides)
+        (let ((rolls*
+               (org-d20--rolls-concat sign rolls (int-to-string times))))
+          (cons rolls* (+ total (* sign times))))
+      (while (> times 0)
+        (let ((new-roll (1+ (random (- sides 1)))))
+          (push new-roll new-rolls))
+        (setq times (- times 1)))
+      (when keep
+        (setq new-rolls (seq-drop (sort new-rolls '<) (- times keep))))
+      (dolist (new-roll new-rolls)
+        (setq rolls (org-d20--rolls-concat sign rolls
+                                           (org-d20--rolls-bracket sides new-roll)))
+        (setq total (+ total (* sign new-roll))))
+      (cons rolls total))))
+
+(defun org-d20--rolls-concat (sign a b)
+  (if (>= sign 0)
+      (if (s-blank? a)
+          b
+        (concat a " + " b))
+    (if (s-blank? a)
+        (concat "- " b)
+      (concat a " - " b))))
+
+(defun org-d20--rolls-bracket (sides roll)
+  (let ((roll* (int-to-string roll)))
+    (cond ((= sides 4)
+           (concat "‹" roll* "›"))
+          ((= sides 6)
+           (concat "|" roll* "|"))
+          ((= sides 8)
+           (concat "/" roll* "/"))
+          ((= sides 10)
+           (concat "{" roll* "}"))
+          ((= sides 12)
+           (concat "⟨" roll* "⟩"))
+          ((= sides 20)
+           (concat "(" roll* ")"))
+          ((= sides 100)
+           (concat "«" roll* "»"))
+          (t
+           (concat "[" roll* "]")))))
 
 (defun org-d20-initiative ()
   "Generates an Org-mode table with initiative order and monster/NPC HP."
@@ -234,7 +270,12 @@ Accepts roll20's extension for rolling multiple dice and keeping
 the best N of them, e.g., 4d6k3."
   (interactive "sRoll: ")
   (setq org-d20-roll--last exp)
-  (message "%s = %s" exp (int-to-string (org-d20--roll exp)))
+  (-let [(rolls . result) (org-d20--roll exp)]
+    ;; if `rolls' contains no spaces then we just rolled a single
+    ;; dice, so don't show the intermediate calculation
+    (if (s-contains? " " rolls)
+        (message "%s = %s = %s" exp rolls (int-to-string result))
+      (message "%s = %s" exp (int-to-string result))))
   (when org-d20-dice-sound
     (play-sound-file org-d20-dice-sound)))
 
@@ -247,8 +288,8 @@ the best N of them, e.g., 4d6k3."
 (defun org-d20-d20 ()
   "Roll two d20, showing result with advantage and disadvantage, and with neither."
   (interactive)
-  (let* ((fst (org-d20--roll "1d20"))
-         (snd (org-d20--roll "1d20"))
+  (let* ((fst (cdr (org-d20--roll "1d20")))
+         (snd (cdr (org-d20--roll "1d20")))
          (fst* (int-to-string fst))
          (snd* (int-to-string snd))
          (adv (if (>= fst snd)
@@ -301,9 +342,9 @@ the best N of them, e.g., 4d6k3."
           (org-table-goto-line (1+ (org-table-current-line)))
           (org-table-goto-line (1+ (org-table-current-line)))
           (let ((init (int-to-string
-                       (org-d20--roll (concat
-                                       "1d20"
-                                       (org-d20--num-to-term init-input)))))
+                       (cdr (org-d20--roll (concat
+                                            "1d20"
+                                            (org-d20--num-to-term init-input))))))
                 (monsters-left num-input))
             (while (>= monsters-left 1)
               ;; open a new row and then immediately move it downwards
@@ -320,7 +361,7 @@ the best N of them, e.g., 4d6k3."
               (org-table-next-field)
               (insert init)
               (org-table-next-field)
-              (insert (int-to-string (org-d20--roll hd-input)))
+              (insert (int-to-string (cdr (org-d20--roll hd-input))))
               (org-table-next-field)
               (insert "0")
               (setq monsters-left (1- monsters-left)
