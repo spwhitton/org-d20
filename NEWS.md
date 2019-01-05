@@ -1,7 +1,7 @@
 0.3 (unreleased)
 ----------------
 
-- Bug fix: off-by-one error in call to `random'
+- Bug fix: off-by-one error in call to `random`
 - `org-d20-roll` shows the results on each dice rolled
 - New defcustom, `org-d20-letter-monsters`
 - New defcustom, `org-d20-continue-monster-numbering`
