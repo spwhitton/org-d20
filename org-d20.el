@@ -4,8 +4,8 @@
 
 ;; Author: Sean Whitton <spwhitton@spwhitton.name>
 ;; URL:
-;; Version: 0.2
-;; Package-Version: 0.2
+;; Version: 0.3pre
+;; Package-Version: 0.3pre
 ;; Package-Requires: (s seq dash)
 ;; Keywords: roleplaying
 
