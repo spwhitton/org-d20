@@ -50,7 +50,9 @@
 (require 'dash)
 
 (defcustom org-d20-party nil
-  "Party initiative modifiers.")
+  "Party initiative modifiers.  A list of cons cells, where the
+  car of each cell is a character's name, and the cdr of each
+  cell is that character's initiative modifier as an integer.")
 
 (defcustom org-d20-dice-sound nil
   "Path to a sound file that `play-sound-file' can play.")
