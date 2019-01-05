@@ -106,7 +106,7 @@ the best N of them, e.g., 4d6k3."
                (org-d20--rolls-concat sign rolls (int-to-string times))))
           (cons rolls* (+ total (* sign times))))
       (while (> times 0)
-        (let ((new-roll (1+ (random (- sides 1)))))
+        (let ((new-roll (1+ (random sides))))
           (push new-roll new-rolls))
         (setq times (- times 1)))
       (when keep
