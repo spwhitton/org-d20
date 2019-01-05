@@ -1,6 +1,6 @@
 ;;; org-d20.el --- minor mode for tabletop roleplaying games that use a d20
 
-;; Copyright (C) 2017-2018  Sean Whitton
+;; Copyright (C) 2017-2019  Sean Whitton
 
 ;; Author: Sean Whitton <spwhitton@spwhitton.name>
 ;; URL:
