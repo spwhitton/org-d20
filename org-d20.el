@@ -55,6 +55,10 @@
 (defcustom org-d20-dice-sound nil
   "Path to a sound file that `play-sound-file' can play.")
 
+(defcustom org-d20-letter-monsters nil
+  "Individuate up to 26 monsters/NPCs with letters, rather than
+  with digits.")
+
 (defvar org-d20-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "<f9>") 'org-d20-initiative-dwim)
@@ -122,7 +126,9 @@ the best N of them, e.g., 4d6k3."
            (while (>= monster 1)
              (let ((hp (int-to-string (org-d20--roll hd-input))))
                (push (list
-                      "" (concat name-input " " (int-to-string monster))
+                      "" (concat name-input
+                                 " "
+                                 (org-d20--monster-number monster))
                       (org-d20--num-to-term init-input) init hp "0")
                      rows))
              (setq monster (1- monster)))))
@@ -281,7 +287,7 @@ the best N of them, e.g., 4d6k3."
               (org-table-next-field)
               (insert name-input)
               (insert " ")
-              (insert (int-to-string monster))
+              (insert (org-d20--monster-number monster))
               (org-table-next-field)
               (insert (org-d20--num-to-term init-input))
               (org-table-next-field)
@@ -301,6 +307,14 @@ the best N of them, e.g., 4d6k3."
     (if (>= k 0)
         (concat "+" (int-to-string k))
       (int-to-string k))))
+
+(defun org-d20--monster-number (n)
+  (if (and org-d20-letter-monsters (>= 26 n))
+      (seq-elt
+       (list "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M"
+             "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z")
+       n)
+    (int-to-string n)))
 
 (defun org-d20-roll-at-point ()
   "Roll the dice expression at point and display result in minibuffer."
