@@ -119,7 +119,6 @@ the best N of them, e.g., 4d6k3."
                           (read-string (concat "How many " name-input "? "))))
          ;; in 5e, all monsters of the same kind have the same
          ;; initiative
-         ;; TODO defcustom to toggle this for other editions
          (let ((init (int-to-string
                       (org-d20--roll (concat
                                      "1d20"
