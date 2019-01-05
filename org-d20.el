@@ -110,6 +110,7 @@ the best N of them, e.g., 4d6k3."
           (push new-roll new-rolls))
         (setq times (- times 1)))
       (when keep
+        ;; TODO this should drop the items without reordering the list
         (setq new-rolls (seq-drop (sort new-rolls '<) (- times keep))))
       (dolist (new-roll new-rolls)
         (setq rolls (org-d20--rolls-concat sign rolls
