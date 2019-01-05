@@ -270,11 +270,19 @@ Accepts roll20's extension for rolling multiple dice and keeping
 the best N of them, e.g., 4d6k3."
   (interactive "sRoll: ")
   (setq org-d20-roll--last exp)
-  (-let [(rolls . result) (org-d20--roll exp)]
+  (-let* (((rolls . result) (org-d20--roll exp))
+          (result* (int-to-string result)))
     ;; if `rolls' contains no spaces then we just rolled a single
     ;; dice, so don't show the intermediate calculation
     (if (s-contains? " " rolls)
-        (message "%s = %s = %s" exp rolls (int-to-string result))
+        ;; if the frame is not wide enough to show the full result,
+        ;; strip out the spaces in the hope that it will fit
+        (let ((rolls-display (if (>
+                                  (+ (length exp) 3 (length rolls) 3 (length result*))
+                                  (frame-width))
+                                 (s-replace " " "" rolls)
+                               rolls)))
+          (message "%s = %s = %s" exp rolls-display result*))
       (message "%s = %s" exp (int-to-string result))))
   (when org-d20-dice-sound
     (play-sound-file org-d20-dice-sound)))
