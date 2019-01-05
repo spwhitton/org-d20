@@ -314,7 +314,7 @@ the best N of them, e.g., 4d6k3."
       (seq-elt
        (list "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M"
              "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z")
-       n)
+       (- n 1))
     (int-to-string n)))
 
 (defun org-d20-roll-at-point ()
