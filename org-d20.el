@@ -61,6 +61,10 @@
   "Individuate up to 26 monsters/NPCs with letters, rather than
   with digits.")
 
+(defcustom org-d20-continue-monster-numbering nil
+  "Continue the numbering/lettering of monsters between types of
+  monsters, rather than starting again for each type.")
+
 (defvar org-d20-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "<f9>") 'org-d20-initiative-dwim)
@@ -109,7 +113,7 @@ the best N of them, e.g., 4d6k3."
   "Generates an Org-mode table with initiative order and monster/NPC HP."
   (interactive "*")
   (let ((rows))
-    (let (name-input init-input hd-input num-input)
+    (let (name-input init-input hd-input num-input (monster 1))
       (loop
        do (setq name-input (read-string "Monster/NPC name (blank when done): "))
        (when (> (length name-input) 0)
@@ -121,10 +125,10 @@ the best N of them, e.g., 4d6k3."
          ;; initiative
          (let ((init (int-to-string
                       (org-d20--roll (concat
-                                     "1d20"
-                                     (org-d20--num-to-term init-input)))))
-               (monster num-input))
-           (while (>= monster 1)
+                                      "1d20"
+                                      (org-d20--num-to-term init-input)))))
+               (monsters-left num-input))
+           (while (>= monsters-left 1)
              (let ((hp (int-to-string (org-d20--roll hd-input))))
                (push (list
                       "" (concat name-input
@@ -132,13 +136,19 @@ the best N of them, e.g., 4d6k3."
                                  (org-d20--monster-number monster))
                       (org-d20--num-to-term init-input) init hp "0")
                      rows))
-             (setq monster (1- monster)))))
+             (setq monsters-left (1- monsters-left)
+                   monster (1+ monster)))))
+       (unless org-d20-continue-monster-numbering (setq monster 1))
        while (-all? (lambda (x) (> (length x) 0))
                     (list name-input init-input hd-input))))
     (dolist (pc org-d20-party)
       (let ((init (read-string (concat (car pc) "'s initiative roll: "))))
         (push (list "" (car pc) (org-d20--num-to-term (cdr pc)) init "-" "-")
               rows)))
+    ;; we prepended each new item to the list, so reverse before
+    ;; printing.  This ensures that the numbering/lettering of
+    ;; monsters on the same initiative count is ascending
+    (setq rows (seq-reverse rows))
     (insert
      "Round of combat: 1\n|Turn|Creature|Mod|Init|HP|Damage|Status|\n|-\n")
     (dolist (row rows)
@@ -272,7 +282,19 @@ the best N of them, e.g., 4d6k3."
              (init-input (read-string (concat name-input "'s init modifier: ")))
              (hd-input (read-string (concat name-input "'s hit points: ")))
              (num-input (string-to-int
-                         (read-string (concat "How many " name-input "? ")))))
+                         (read-string (concat "How many " name-input "? "))))
+             (monster 1))
+        ;; first, if we need to, try to count the number of monsters.
+        ;; We can only use a crude heuristic here because we don't
+        ;; know what kind of things the user might have added to the
+        ;; table
+        (when org-d20-continue-monster-numbering
+          (save-excursion
+            (org-table-goto-line 1)
+            (while (org-table-goto-line (1+ (org-table-current-line)))
+              (org-table-goto-column 2)
+              (when (looking-at "[^|]+ \\([A-Z]\\|[0-9]+\\)~? *|")
+                (setq monster (1+ monster))))))
         (save-excursion
           ;; ensure we're not on header row (following won't go past end
           ;; of table)
@@ -282,9 +304,13 @@ the best N of them, e.g., 4d6k3."
                        (org-d20--roll (concat
                                        "1d20"
                                        (org-d20--num-to-term init-input)))))
-                (monster num-input))
-            (while (>= monster 1)
+                (monsters-left num-input))
+            (while (>= monsters-left 1)
+              ;; open a new row and then immediately move it downwards
+              ;; to ensure that the monsters on the same initiative
+              ;; count are numbered/lettered in ascending order
               (org-table-insert-row)
+              (org-table-move-row)
               (org-table-next-field)
               (insert name-input)
               (insert " ")
@@ -297,7 +323,8 @@ the best N of them, e.g., 4d6k3."
               (insert (int-to-string (org-d20--roll hd-input)))
               (org-table-next-field)
               (insert "0")
-              (setq monster (1- monster))))
+              (setq monsters-left (1- monsters-left)
+                    monster (1+ monster))))
           (org-table-goto-column 4)
           (org-table-sort-lines nil ?N)
           (org-table-align)))
