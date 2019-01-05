@@ -106,7 +106,7 @@ the best N of them, e.g., 4d6k3."
             rolls))))))
 
 (defun org-d20-initiative ()
-  "Generates an Org-mode table with initiative order and monster HP."
+  "Generates an Org-mode table with initiative order and monster/NPC HP."
   (interactive "*")
   (let ((rows))
     (let (name-input init-input hd-input num-input)
