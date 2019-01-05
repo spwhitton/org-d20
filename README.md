@@ -52,16 +52,16 @@ confirm that the value for org-d20-party that you've supplied is safe.
 
 The following bindings should then be available:
 
-- <kbd>&gt;f9></kbd> -- start a combat, or advance the turn/round counter
+- <kbd>&lt;f9></kbd> -- start a combat, or advance the turn/round counter
   for an existing combat, depending on point
-- <kbd>S-&gt;f9></kbd> -- add new monsters to an existing combat
-- <kbd>&gt;f10></kbd> -- apply damage to the monster at point
-- <kbd>S-&gt;f10></kbd> -- evaluate the dice expression (e.g. `4d10`) at
+- <kbd>S-&lt;f9></kbd> -- add new monsters to an existing combat
+- <kbd>&lt;f10></kbd> -- apply damage to the monster at point
+- <kbd>S-&lt;f10></kbd> -- evaluate the dice expression (e.g. `4d10`) at
   point
-- <kbd>&gt;f11></kbd> -- prompt for dice expression and evaluate it
-- <kbd>S-&gt;f11></kbd> -- roll the last dice expression again
-- <kbd>&gt;f12></kbd> -- roll d20, with advantage and disadvantage shown
-- <kbd>S-&gt;f12></kbd> -- roll percentile dice
+- <kbd>&lt;f11></kbd> -- prompt for dice expression and evaluate it
+- <kbd>S-&lt;f11></kbd> -- roll the last dice expression again
+- <kbd>&lt;f12></kbd> -- roll d20, with advantage and disadvantage shown
+- <kbd>S-&lt;f12></kbd> -- roll percentile dice
 
 ## Bugs/patches ##
 
