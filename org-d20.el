@@ -48,6 +48,7 @@
 (require 's)
 (require 'seq)
 (require 'dash)
+(require 'org-table)
 
 (defcustom org-d20-party nil
   "Party initiative modifiers.  A list of cons cells, where the
