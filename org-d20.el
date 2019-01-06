@@ -143,17 +143,20 @@ the best N of them, e.g., 4d6k3."
         (setq total (+ total (* sign new-roll))))
       (cons rolls total))))
 
+;;;###autoload
 (defun org-d20-d% ()
   "Roll a percentile dice."
   (interactive)
   (org-d20-roll "1d100"))
 
+;;;###autoload
 (defun org-d20-roll-at-point ()
   "Roll the dice expression at point and display result in minibuffer."
   (interactive)
   (let ((exp (thing-at-point 'sexp t)))
     (org-d20-roll exp)))
 
+;;;###autoload
 (defun org-d20-roll (exp)
   "Prompt, evaluate and display dice roll expression EXP.
 
@@ -179,6 +182,7 @@ the best N of them, e.g., 4d6k3."
   (when org-d20-dice-sound
     (play-sound-file org-d20-dice-sound)))
 
+;;;###autoload
 (defun org-d20-roll-last ()
   "Roll the last user dice roll expression again."
   (interactive)
@@ -186,6 +190,7 @@ the best N of them, e.g., 4d6k3."
       (org-d20-roll org-d20-roll--last)
     (call-interactively #'org-d20-roll)))
 
+;;;###autoload
 (defun org-d20-d20 ()
   "Roll two d20, showing result with advantage and disadvantage, and neither."
   (interactive)
