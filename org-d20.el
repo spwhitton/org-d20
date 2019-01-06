@@ -100,7 +100,7 @@ Org-mode document."
 
 
 
-;;; dice rolling
+;;; Dice rolling
 
 (defun org-d20--roll (exp)
   "Evaluate dice roll expression EXP.
@@ -134,7 +134,8 @@ the best N of them, e.g., 4d6k3."
           (push new-roll new-rolls))
         (setq times (1- times)))
       (when keep
-        ;; TODO this should drop the items without reordering the list
+        ;; TODO: This should drop the items without reordering the
+        ;;       list (spw 2019-01-05)
         (setq new-rolls (seq-drop (sort new-rolls #'<) (- times keep))))
       (dolist (new-roll new-rolls)
         (setq rolls
@@ -166,10 +167,10 @@ the best N of them, e.g., 4d6k3."
   (setq org-d20-roll--last exp)
   (-let* (((rolls . result) (org-d20--roll exp))
           (result* (int-to-string result)))
-    ;; if `rolls' contains no spaces then we just rolled a single
+    ;; If `rolls' contains no spaces then we just rolled a single
     ;; dice, so don't show the intermediate calculation
     (if (s-contains? " " rolls)
-        ;; if the frame is not wide enough to show the full result,
+        ;; If the frame is not wide enough to show the full result,
         ;; strip out the spaces in the hope that it will fit
         (let ((rolls-display
                (if (>
@@ -211,7 +212,7 @@ the best N of them, e.g., 4d6k3."
 
 
 
-;;; combat tracking
+;;; Combat tracking
 
 (defun org-d20-initiative ()
   "Generate an Org-mode table with initiative order and monster/NPC HP."
@@ -226,7 +227,7 @@ the best N of them, e.g., 4d6k3."
                num-input
                (cdr (org-d20--roll
                      (read-string (concat "How many " name-input "? ")))))
-         ;; in 5e, all monsters of the same kind have the same
+         ;; In 5e, all monsters of the same kind have the same
          ;; initiative
          (let ((init (int-to-string
                       (cdr (org-d20--roll
@@ -251,7 +252,7 @@ the best N of them, e.g., 4d6k3."
       (let ((init (read-string (concat (car pc) "'s initiative roll: "))))
         (push (list "" (car pc) (org-d20--num-to-term (cdr pc)) init "-" "-")
               rows)))
-    ;; we prepended each new item to the list, so reverse before
+    ;; We prepended each new item to the list, so reverse before
     ;; printing.  This ensures that the numbering/lettering of
     ;; monsters on the same initiative count is ascending
     (setq rows (seq-reverse rows))
@@ -346,7 +347,7 @@ the best N of them, e.g., 4d6k3."
               (cdr (org-d20--roll
                     (read-string (concat "How many " name-input "? ")))))
              (monster 1))
-        ;; first, if we need to, try to count the number of monsters.
+        ;; First, if we need to, try to count the number of monsters.
         ;; We can only use a crude heuristic here because we don't
         ;; know what kind of things the user might have added to the
         ;; table
@@ -358,7 +359,7 @@ the best N of them, e.g., 4d6k3."
               (when (looking-at "[^|]+ \\([A-Z]\\|[0-9]+\\)~? *|")
                 (setq monster (1+ monster))))))
         (save-excursion
-          ;; ensure we're not on header row (following won't go past end
+          ;; Ensure we're not on header row (following won't go past end
           ;; of table)
           (org-table-goto-line (1+ (org-table-current-line)))
           (org-table-goto-line (1+ (org-table-current-line)))
@@ -369,7 +370,7 @@ the best N of them, e.g., 4d6k3."
                               (org-d20--num-to-term init-input))))))
                 (monsters-left num-input))
             (while (>= monsters-left 1)
-              ;; open a new row and then immediately move it downwards
+              ;; Open a new row and then immediately move it downwards
               ;; to ensure that the monsters on the same initiative
               ;; count are numbered/lettered in ascending order
               (org-table-insert-row)
@@ -397,14 +398,14 @@ the best N of them, e.g., 4d6k3."
 
 ;;; helper functions
 
-;; convert a signed integer to a string term
+;; Convert a signed integer to a string term
 (defun org-d20--num-to-term (n)
   (let ((k (if (stringp n) (string-to-number n) n)))
     (if (>= k 0)
         (concat "+" (int-to-string k))
       (int-to-string k))))
 
-;; return the number or letter with which a monster name should be suffixed
+;; Return the number or letter with which a monster name should be suffixed
 (defun org-d20--monster-number (n)
   (if (and org-d20-letter-monsters (>= 26 n))
       (seq-elt
@@ -413,7 +414,7 @@ the best N of them, e.g., 4d6k3."
        (1- n))
     (int-to-string n)))
 
-;; concat b onto a as a signed term, where a is possibly empty
+;; Concat b onto a as a signed term, where a is possibly empty
 (defun org-d20--rolls-concat (sign a b)
   (if (>= sign 0)
       (if (s-blank? a)
@@ -423,7 +424,7 @@ the best N of them, e.g., 4d6k3."
         (concat "- " b)
       (concat a " - " b))))
 
-;; bracket a number so it looks a bit like a dice roll result
+;; Bracket a number so it looks a bit like a dice roll result
 (defun org-d20--rolls-bracket (sides roll)
   (let ((roll* (int-to-string roll)))
     (cond ((= sides 4)
