@@ -51,20 +51,24 @@
 (require 'org-table)
 
 (defcustom org-d20-party nil
-  "Party initiative modifiers.  A list of cons cells, where the
-  car of each cell is a character's name, and the cdr of each
-  cell is that character's initiative modifier as an integer.")
+  "Party initiative modifiers.
+
+A list of cons cells, where the car of each cell is a character's
+name, and the cdr of each cell is that character's initiative
+modifier as an integer.")
 
 (defcustom org-d20-dice-sound nil
   "Path to a sound file that `play-sound-file' can play.")
 
 (defcustom org-d20-letter-monsters nil
-  "Individuate up to 26 monsters/NPCs with letters, rather than
-  with digits.")
+  "Individuate up to 26 monsters/NPCs with letters.
+
+Rather than with digits.")
 
 (defcustom org-d20-continue-monster-numbering nil
-  "Continue the numbering/lettering of monsters between types of
-  monsters, rather than starting again for each type.")
+  "Continue the numbering/lettering of monsters between types.
+
+Rather than starting again for each type.")
 
 (defvar org-d20-mode-map
   (let ((map (make-sparse-keymap)))
@@ -77,7 +81,7 @@
     (define-key map (kbd "<f12>") #'org-d20-d20)
     (define-key map (kbd "S-<f12>") #'org-d20-d%)
     map)
-  "Keymap for `org-d20-mode'.")
+  "Keymap for function `org-d20-mode'.")
 
 (defun org-d20--roll (exp)
   "Evaluate dice roll expression EXP.
@@ -148,7 +152,7 @@ the best N of them, e.g., 4d6k3."
            (concat "[" roll* "]")))))
 
 (defun org-d20-initiative ()
-  "Generates an Org-mode table with initiative order and monster/NPC HP."
+  "Generate an Org-mode table with initiative order and monster/NPC HP."
   (interactive "*")
   (let ((rows))
     (let (name-input init-input hd-input num-input (monster 1))
@@ -231,7 +235,7 @@ the best N of them, e.g., 4d6k3."
   (org-table-align))
 
 (defun org-d20-damage (dmg)
-  "Apply damage to the monster/NPC in the initiative table row at point."
+  "Apply DMG poitns of damage to the monster/NPC in the table row at point."
   (interactive "*nDamage dealt: ")
   (when (org-at-table-p)
     (org-table-goto-column 6)
