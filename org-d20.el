@@ -68,14 +68,14 @@
 
 (defvar org-d20-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "<f9>") 'org-d20-initiative-dwim)
-    (define-key map (kbd "S-<f9>") 'org-d20-initiative-add)
-    (define-key map (kbd "<f10>") 'org-d20-damage)
-    (define-key map (kbd "S-<f10>") 'org-d20-roll-at-point)
-    (define-key map (kbd "<f11>") 'org-d20-roll)
-    (define-key map (kbd "S-<f11>") 'org-d20-roll-last)
-    (define-key map (kbd "<f12>") 'org-d20-d20)
-    (define-key map (kbd "S-<f12>") 'org-d20-d%)
+    (define-key map (kbd "<f9>") #'org-d20-initiative-dwim)
+    (define-key map (kbd "S-<f9>") #'org-d20-initiative-add)
+    (define-key map (kbd "<f10>") #'org-d20-damage)
+    (define-key map (kbd "S-<f10>") #'org-d20-roll-at-point)
+    (define-key map (kbd "<f11>") #'org-d20-roll)
+    (define-key map (kbd "S-<f11>") #'org-d20-roll-last)
+    (define-key map (kbd "<f12>") #'org-d20-d20)
+    (define-key map (kbd "S-<f12>") #'org-d20-d%)
     map)
   "Keymap for `org-d20-mode'.")
 
@@ -97,7 +97,7 @@ the best N of them, e.g., 4d6k3."
           (ours (let ((chopped (s-chop-prefix "-" exp)))
                   (if (string= (substring chopped 0 1) "d")
                       (concat "1" chopped) chopped)))
-          (split (seq-map 'string-to-int (s-split "[dk]" ours)))
+          (split (seq-map #'string-to-int (s-split "[dk]" ours)))
           (times (seq-elt split 0))
           (sides (ignore-errors (seq-elt split 1)))
           (keep (ignore-errors (seq-elt split 2)))
@@ -112,7 +112,7 @@ the best N of them, e.g., 4d6k3."
         (setq times (- times 1)))
       (when keep
         ;; TODO this should drop the items without reordering the list
-        (setq new-rolls (seq-drop (sort new-rolls '<) (- times keep))))
+        (setq new-rolls (seq-drop (sort new-rolls #'<) (- times keep))))
       (dolist (new-roll new-rolls)
         (setq rolls (org-d20--rolls-concat sign rolls
                                            (org-d20--rolls-bracket sides new-roll)))
@@ -293,7 +293,7 @@ the best N of them, e.g., 4d6k3."
   (interactive)
   (if (boundp 'org-d20-roll--last)
       (org-d20-roll org-d20-roll--last)
-    (call-interactively 'org-d20-roll)))
+    (call-interactively #'org-d20-roll)))
 
 (defun org-d20-d20 ()
   "Roll two d20, showing result with advantage and disadvantage, and with neither."
