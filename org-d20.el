@@ -79,12 +79,12 @@ Rather than starting again for each type."
 
 (defvar org-d20-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "<f9>") #'org-d20-initiative-dwim)
-    (define-key map (kbd "S-<f9>") #'org-d20-initiative-add)
-    (define-key map (kbd "<f10>") #'org-d20-damage)
-    (define-key map (kbd "S-<f10>") #'org-d20-roll-at-point)
-    (define-key map (kbd "<f11>") #'org-d20-roll)
-    (define-key map (kbd "S-<f11>") #'org-d20-roll-last)
+    (define-key map (kbd "C-c , i") #'org-d20-initiative-dwim)
+    (define-key map (kbd "C-c , a") #'org-d20-initiative-add)
+    (define-key map (kbd "C-c , d") #'org-d20-damage)
+    (define-key map (kbd "C-c , r") #'org-d20-roll)
+    (define-key map (kbd "<f10>") #'org-d20-roll-at-point)
+    (define-key map (kbd "<f11>") #'org-d20-roll-last)
     (define-key map (kbd "<f12>") #'org-d20-d20)
     (define-key map (kbd "S-<f12>") #'org-d20-d%)
     map)
