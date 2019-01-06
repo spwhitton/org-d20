@@ -83,6 +83,16 @@ Rather than starting again for each type.")
     map)
   "Keymap for function `org-d20-mode'.")
 
+;;;###autoload
+(define-minor-mode org-d20-mode
+  "Bind convenience functions for running a d20-like game in an
+Org-mode document."
+  :lighter " d20")
+
+
+
+;;; dice rolling
+
 (defun org-d20--roll (exp)
   "Evaluate dice roll expression EXP.
 
@@ -123,33 +133,69 @@ the best N of them, e.g., 4d6k3."
         (setq total (+ total (* sign new-roll))))
       (cons rolls total))))
 
-(defun org-d20--rolls-concat (sign a b)
-  (if (>= sign 0)
-      (if (s-blank? a)
-          b
-        (concat a " + " b))
-    (if (s-blank? a)
-        (concat "- " b)
-      (concat a " - " b))))
+(defun org-d20-d% ()
+  "Roll a percentile dice."
+  (interactive)
+  (org-d20-roll "1d100"))
 
-(defun org-d20--rolls-bracket (sides roll)
-  (let ((roll* (int-to-string roll)))
-    (cond ((= sides 4)
-           (concat "‹" roll* "›"))
-          ((= sides 6)
-           (concat "|" roll* "|"))
-          ((= sides 8)
-           (concat "/" roll* "/"))
-          ((= sides 10)
-           (concat "{" roll* "}"))
-          ((= sides 12)
-           (concat "⟨" roll* "⟩"))
-          ((= sides 20)
-           (concat "(" roll* ")"))
-          ((= sides 100)
-           (concat "«" roll* "»"))
-          (t
-           (concat "[" roll* "]")))))
+(defun org-d20-roll-at-point ()
+  "Roll the dice expression at point and display result in minibuffer."
+  (interactive)
+  (let ((exp (thing-at-point 'sexp t)))
+    (org-d20-roll exp)))
+
+(defun org-d20-roll (exp)
+  "Prompt, evaluate and display dice roll expression EXP.
+
+Accepts roll20's extension for rolling multiple dice and keeping
+the best N of them, e.g., 4d6k3."
+  (interactive "sRoll: ")
+  (setq org-d20-roll--last exp)
+  (-let* (((rolls . result) (org-d20--roll exp))
+          (result* (int-to-string result)))
+    ;; if `rolls' contains no spaces then we just rolled a single
+    ;; dice, so don't show the intermediate calculation
+    (if (s-contains? " " rolls)
+        ;; if the frame is not wide enough to show the full result,
+        ;; strip out the spaces in the hope that it will fit
+        (let ((rolls-display (if (>
+                                  (+ (length exp) 3 (length rolls) 3 (length result*))
+                                  (frame-width))
+                                 (s-replace " " "" rolls)
+                               rolls)))
+          (message "%s = %s = %s" exp rolls-display result*))
+      (message "%s = %s" exp (int-to-string result))))
+  (when org-d20-dice-sound
+    (play-sound-file org-d20-dice-sound)))
+
+(defun org-d20-roll-last ()
+  "Roll the last user dice roll expression again."
+  (interactive)
+  (if (boundp 'org-d20-roll--last)
+      (org-d20-roll org-d20-roll--last)
+    (call-interactively #'org-d20-roll)))
+
+(defun org-d20-d20 ()
+  "Roll two d20, showing result with advantage and disadvantage, and with neither."
+  (interactive)
+  (let* ((fst (cdr (org-d20--roll "1d20")))
+         (snd (cdr (org-d20--roll "1d20")))
+         (fst* (int-to-string fst))
+         (snd* (int-to-string snd))
+         (adv (if (>= fst snd)
+                  (concat (propertize fst* 'face 'bold) "  " snd*)
+                (concat fst* "  " (propertize snd* 'face 'bold))))
+         (disadv (if (<= fst snd)
+                     (concat (propertize fst* 'face 'bold) "  " snd*)
+                   (concat fst* "  " (propertize snd* 'face 'bold)))))
+    (message "No adv./disadv.:  %s\tAdv.:  %s\tDisadv.:  %s"
+             fst* adv disadv))
+  (when org-d20-dice-sound
+    (play-sound-file org-d20-dice-sound)))
+
+
+
+;;; combat tracking
 
 (defun org-d20-initiative ()
   "Generate an Org-mode table with initiative order and monster/NPC HP."
@@ -263,65 +309,6 @@ the best N of them, e.g., 4d6k3."
                     (insert "bloodied")))))))))
     (org-table-align)))
 
-(defun org-d20--org-table-end-of-current-cell-content ()
-  "Move point to the end of the content of the current Org table cell."
-  (search-forward "|" (save-excursion (end-of-line) (point)))
-  (forward-char -2)
-  (skip-chars-backward " "))
-
-(defun org-d20-roll (exp)
-  "Prompt, evaluate and display dice roll expression EXP.
-
-Accepts roll20's extension for rolling multiple dice and keeping
-the best N of them, e.g., 4d6k3."
-  (interactive "sRoll: ")
-  (setq org-d20-roll--last exp)
-  (-let* (((rolls . result) (org-d20--roll exp))
-          (result* (int-to-string result)))
-    ;; if `rolls' contains no spaces then we just rolled a single
-    ;; dice, so don't show the intermediate calculation
-    (if (s-contains? " " rolls)
-        ;; if the frame is not wide enough to show the full result,
-        ;; strip out the spaces in the hope that it will fit
-        (let ((rolls-display (if (>
-                                  (+ (length exp) 3 (length rolls) 3 (length result*))
-                                  (frame-width))
-                                 (s-replace " " "" rolls)
-                               rolls)))
-          (message "%s = %s = %s" exp rolls-display result*))
-      (message "%s = %s" exp (int-to-string result))))
-  (when org-d20-dice-sound
-    (play-sound-file org-d20-dice-sound)))
-
-(defun org-d20-roll-last ()
-  (interactive)
-  (if (boundp 'org-d20-roll--last)
-      (org-d20-roll org-d20-roll--last)
-    (call-interactively #'org-d20-roll)))
-
-(defun org-d20-d20 ()
-  "Roll two d20, showing result with advantage and disadvantage, and with neither."
-  (interactive)
-  (let* ((fst (cdr (org-d20--roll "1d20")))
-         (snd (cdr (org-d20--roll "1d20")))
-         (fst* (int-to-string fst))
-         (snd* (int-to-string snd))
-         (adv (if (>= fst snd)
-                  (concat (propertize fst* 'face 'bold) "  " snd*)
-                (concat fst* "  " (propertize snd* 'face 'bold))))
-         (disadv (if (<= fst snd)
-                     (concat (propertize fst* 'face 'bold) "  " snd*)
-                   (concat fst* "  " (propertize snd* 'face 'bold)))))
-    (message "No adv./disadv.:  %s\tAdv.:  %s\tDisadv.:  %s"
-             fst* adv disadv))
-  (when org-d20-dice-sound
-    (play-sound-file org-d20-dice-sound)))
-
-(defun org-d20-d% ()
-  "Roll a percentile dice."
-  (interactive)
-  (org-d20-roll "1d100"))
-
 (defun org-d20-initiative-dwim ()
   "Start a new combat or advance the turn tracker, based on point."
   (interactive "*")
@@ -386,6 +373,10 @@ the best N of them, e.g., 4d6k3."
           (org-table-align)))
     (org-d20-initiative)))
 
+
+
+;;; helper functions
+
 (defun org-d20--num-to-term (n)
   (let ((k (if (stringp n) (string-to-int n) n)))
     (if (>= k 0)
@@ -400,17 +391,39 @@ the best N of them, e.g., 4d6k3."
        (- n 1))
     (int-to-string n)))
 
-(defun org-d20-roll-at-point ()
-  "Roll the dice expression at point and display result in minibuffer."
-  (interactive)
-  (let ((exp (thing-at-point 'sexp t)))
-    (org-d20-roll exp)))
+(defun org-d20--rolls-concat (sign a b)
+  (if (>= sign 0)
+      (if (s-blank? a)
+          b
+        (concat a " + " b))
+    (if (s-blank? a)
+        (concat "- " b)
+      (concat a " - " b))))
 
-;;;###autoload
-(define-minor-mode org-d20-mode
-  "Bind convenience functions for running a d20-like game in an
-Org-mode document."
-  :lighter " d20")
+(defun org-d20--rolls-bracket (sides roll)
+  (let ((roll* (int-to-string roll)))
+    (cond ((= sides 4)
+           (concat "‹" roll* "›"))
+          ((= sides 6)
+           (concat "|" roll* "|"))
+          ((= sides 8)
+           (concat "/" roll* "/"))
+          ((= sides 10)
+           (concat "{" roll* "}"))
+          ((= sides 12)
+           (concat "⟨" roll* "⟩"))
+          ((= sides 20)
+           (concat "(" roll* ")"))
+          ((= sides 100)
+           (concat "«" roll* "»"))
+          (t
+           (concat "[" roll* "]")))))
+
+(defun org-d20--org-table-end-of-current-cell-content ()
+  "Move point to the end of the content of the current Org table cell."
+  (search-forward "|" (save-excursion (end-of-line) (point)))
+  (forward-char -2)
+  (skip-chars-backward " "))
 
 (provide 'org-d20)
 ;;; org-d20.el ends here
