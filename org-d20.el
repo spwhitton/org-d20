@@ -1,4 +1,4 @@
-;;; org-d20.el --- minor mode for tabletop roleplaying games that use a d20
+;;; org-d20.el --- minor mode for tabletop roleplaying games that use a d20 -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017-2019  Sean Whitton
 
