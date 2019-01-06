@@ -132,7 +132,7 @@ the best N of them, e.g., 4d6k3."
       (while (> times 0)
         (let ((new-roll (1+ (random sides))))
           (push new-roll new-rolls))
-        (setq times (- times 1)))
+        (setq times (1- times)))
       (when keep
         ;; TODO this should drop the items without reordering the list
         (setq new-rolls (seq-drop (sort new-rolls #'<) (- times keep))))
@@ -405,7 +405,7 @@ the best N of them, e.g., 4d6k3."
       (seq-elt
        (list "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M"
              "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z")
-       (- n 1))
+       (1- n))
     (int-to-string n)))
 
 ;; concat b onto a as a signed term, where a is possibly empty
