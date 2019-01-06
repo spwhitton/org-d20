@@ -4,6 +4,7 @@
 - Bug fix: off-by-one error in call to `random`
   - This meant that the maximum value on a dice could never be
     rolled.  Now monsters can critically hit players again.
+- Bug fix: make roll20's 'k' notation actually have an effect
 - Change default keybindings to match Emacs conventions
   - Avoid binding to <f9>
 
