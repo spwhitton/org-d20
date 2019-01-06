@@ -229,10 +229,7 @@ the best N of them, e.g., 4d6k3."
          ;; In 5e, all monsters of the same kind have the same
          ;; initiative
          (let ((init (int-to-string
-                      (cdr (org-d20--roll
-                            (concat
-                             "1d20"
-                             (org-d20--num-to-term init-input))))))
+                      (org-d20--d20-plus (string-to-number init-input))))
                (monsters-left num-input))
            (while (>= monsters-left 1)
              (let ((hp (int-to-string (cdr (org-d20--roll hd-input)))))
@@ -363,10 +360,7 @@ the best N of them, e.g., 4d6k3."
           (org-table-goto-line (1+ (org-table-current-line)))
           (org-table-goto-line (1+ (org-table-current-line)))
           (let ((init (int-to-string
-                       (cdr (org-d20--roll
-                             (concat
-                              "1d20"
-                              (org-d20--num-to-term init-input))))))
+                       (org-d20--d20-plus (string-to-number init-input))))
                 (monsters-left num-input))
             (while (>= monsters-left 1)
               ;; Open a new row and then immediately move it downwards
@@ -448,6 +442,10 @@ the best N of them, e.g., 4d6k3."
   (search-forward "|" (save-excursion (end-of-line) (point)))
   (forward-char -2)
   (skip-chars-backward " "))
+
+;; Roll a d20, adding or subtracting a modifier
+(defun org-d20--d20-plus (&optional mod)
+  (+ 1 mod (random 20)))
 
 (provide 'org-d20)
 ;;; org-d20.el ends here
