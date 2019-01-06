@@ -49,25 +49,33 @@
 (require 'dash)
 (require 'org-table)
 
+(defgroup org-d20 nil
+  "Customisation of `org-d20-mode'."
+  :group 'org)
+
 (defcustom org-d20-party nil
   "Party initiative modifiers.
 
 A list of cons cells, where the car of each cell is a character's
 name, and the cdr of each cell is that character's initiative
-modifier as an integer.")
+modifier as an integer."
+  :group 'org-d20)
 
 (defcustom org-d20-dice-sound nil
-  "Path to a sound file that `play-sound-file' can play.")
+  "Path to a sound file that `play-sound-file' can play."
+  :group 'org-d20)
 
 (defcustom org-d20-letter-monsters nil
-  "Individuate up to 26 monsters/NPCs with letters.
+  "Non-nil means individuate up to 26 monsters/NPCs with letters.
 
-Rather than with digits.")
+Rather than with digits."
+  :group 'org-d20)
 
 (defcustom org-d20-continue-monster-numbering nil
-  "Continue the numbering/lettering of monsters between types.
+  "Non-nil means continue the numbering/lettering of monsters between types.
 
-Rather than starting again for each type.")
+Rather than starting again for each type."
+  :group 'org-d20)
 
 (defvar org-d20-mode-map
   (let ((map (make-sparse-keymap)))
