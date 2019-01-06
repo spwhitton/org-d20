@@ -122,8 +122,10 @@ the best N of them, e.g., 4d6k3."
                       (concat "1" chopped) chopped)))
           (split (seq-map #'string-to-number (s-split "[dk]" ours)))
           (times (seq-elt split 0))
-          (sides (ignore-errors (seq-elt split 1)))
-          (keep (ignore-errors (seq-elt split 2)))
+          (sides (when (> (seq-length split) 1)
+                   (seq-elt split 1)))
+          (keep (when (> (seq-length split) 2)
+                  (seq-elt split 2)))
           (new-rolls '()))
     (if (not sides)
         (let ((rolls*
