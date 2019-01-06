@@ -1,11 +1,11 @@
-;;; org-d20.el --- minor mode for tabletop roleplaying games that use a d20 -*- lexical-binding: t; -*-
+;;; org-d20.el --- minor mode for d20 tabletop roleplaying games -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017-2019  Sean Whitton
 
 ;; Author: Sean Whitton <spwhitton@spwhitton.name>
 ;; URL: https://spwhitton.name/tech/code/org-d20/
 ;; Version: 0.3pre
-;; Package-Requires: (s seq dash)
+;; Package-Requires: ((s "1.11.0") (seq "2.19") (dash "2.12.0") (emacs "24"))
 ;; Keywords: outlines games
 
 ;; This file is NOT part of GNU Emacs.
