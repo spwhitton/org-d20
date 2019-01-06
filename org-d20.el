@@ -3,11 +3,10 @@
 ;; Copyright (C) 2017-2019  Sean Whitton
 
 ;; Author: Sean Whitton <spwhitton@spwhitton.name>
-;; URL:
+;; URL: https://spwhitton.name/tech/code/org-d20/
 ;; Version: 0.3pre
-;; Package-Version: 0.3pre
 ;; Package-Requires: (s seq dash)
-;; Keywords: roleplaying
+;; Keywords: outlines games
 
 ;; This file is NOT part of GNU Emacs.
 
