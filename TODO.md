@@ -1,8 +1,3 @@
-Soon
-----
-
-- [Submit to MELPA](https://github.com/melpa/melpa/blob/master/CONTRIBUTING.org#making-your-package-ready-for-inclusion)
-
 Features
 --------
 
