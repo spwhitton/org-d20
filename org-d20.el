@@ -137,8 +137,9 @@ the best N of them, e.g., 4d6k3."
         ;; TODO this should drop the items without reordering the list
         (setq new-rolls (seq-drop (sort new-rolls #'<) (- times keep))))
       (dolist (new-roll new-rolls)
-        (setq rolls (org-d20--rolls-concat sign rolls
-                                           (org-d20--rolls-bracket sides new-roll)))
+        (setq rolls
+              (org-d20--rolls-concat sign rolls
+                                     (org-d20--rolls-bracket sides new-roll)))
         (setq total (+ total (* sign new-roll))))
       (cons rolls total))))
 
@@ -167,11 +168,12 @@ the best N of them, e.g., 4d6k3."
     (if (s-contains? " " rolls)
         ;; if the frame is not wide enough to show the full result,
         ;; strip out the spaces in the hope that it will fit
-        (let ((rolls-display (if (>
-                                  (+ (length exp) 3 (length rolls) 3 (length result*))
-                                  (frame-width))
-                                 (s-replace " " "" rolls)
-                               rolls)))
+        (let ((rolls-display
+               (if (>
+                    (+ (length exp) 3 (length rolls) 3 (length result*))
+                    (frame-width))
+                   (s-replace " " "" rolls)
+                 rolls)))
           (message "%s = %s = %s" exp rolls-display result*))
       (message "%s = %s" exp (int-to-string result))))
   (when org-d20-dice-sound
@@ -185,7 +187,7 @@ the best N of them, e.g., 4d6k3."
     (call-interactively #'org-d20-roll)))
 
 (defun org-d20-d20 ()
-  "Roll two d20, showing result with advantage and disadvantage, and with neither."
+  "Roll two d20, showing result with advantage and disadvantage, and neither."
   (interactive)
   (let* ((fst (cdr (org-d20--roll "1d20")))
          (snd (cdr (org-d20--roll "1d20")))
@@ -216,14 +218,16 @@ the best N of them, e.g., 4d6k3."
        (when (> (length name-input) 0)
          (setq init-input (read-string (concat name-input "'s init modifier: "))
                hd-input (read-string (concat name-input "'s hit points: "))
-               num-input (cdr (org-d20--roll
-                               (read-string (concat "How many " name-input "? ")))))
+               num-input
+               (cdr (org-d20--roll
+                     (read-string (concat "How many " name-input "? ")))))
          ;; in 5e, all monsters of the same kind have the same
          ;; initiative
          (let ((init (int-to-string
-                      (cdr (org-d20--roll (concat
-                                           "1d20"
-                                           (org-d20--num-to-term init-input))))))
+                      (cdr (org-d20--roll
+                            (concat
+                             "1d20"
+                             (org-d20--num-to-term init-input))))))
                (monsters-left num-input))
            (while (>= monsters-left 1)
              (let ((hp (int-to-string (cdr (org-d20--roll hd-input)))))
@@ -271,7 +275,8 @@ the best N of them, e.g., 4d6k3."
           (goto-char cur)
           (skip-chars-backward ">")
           (delete-char 4)
-          (if (save-excursion (org-table-goto-line (1+ (org-table-current-line))))
+          (if (save-excursion
+                (org-table-goto-line (1+ (org-table-current-line))))
               (progn
                 (forward-line 1)
                 (org-table-next-field)
@@ -353,9 +358,10 @@ the best N of them, e.g., 4d6k3."
           (org-table-goto-line (1+ (org-table-current-line)))
           (org-table-goto-line (1+ (org-table-current-line)))
           (let ((init (int-to-string
-                       (cdr (org-d20--roll (concat
-                                            "1d20"
-                                            (org-d20--num-to-term init-input))))))
+                       (cdr (org-d20--roll
+                             (concat
+                              "1d20"
+                              (org-d20--num-to-term init-input))))))
                 (monsters-left num-input))
             (while (>= monsters-left 1)
               ;; open a new row and then immediately move it downwards
