@@ -252,19 +252,19 @@ the best N of them, e.g., 4d6k3."
                   (progn
                     (org-table-goto-column 2)
                     (insert "~")
-                    (org-table-end-of-current-cell-content)
+                    (spw-d20--org-table-end-of-current-cell-content)
                     (insert "~"))
                 (when (>= total-damage (/ max-hp 2))
                   (org-table-goto-column 7)
-                  (org-table-end-of-current-cell-content)
+                  (spw-d20--org-table-end-of-current-cell-content)
                   (unless (looking-back "bloodied")
                     (unless (looking-back "|")
                       (insert "; "))
                     (insert "bloodied")))))))))
     (org-table-align)))
 
-(defun org-table-end-of-current-cell-content ()
-  (interactive)
+(defun org-d20--org-table-end-of-current-cell-content ()
+  "Move point to the end of the content of the current Org table cell."
   (search-forward "|" (save-excursion (end-of-line) (point)))
   (forward-char -2)
   (skip-chars-backward " "))
