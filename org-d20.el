@@ -124,7 +124,7 @@ the best N of them, e.g., 4d6k3."
           (times (seq-elt split 0))
           (sides (ignore-errors (seq-elt split 1)))
           (keep (ignore-errors (seq-elt split 2)))
-          (new-rolls))
+          (new-rolls '()))
     (if (not sides)
         (let ((rolls*
                (org-d20--rolls-concat sign rolls (int-to-string times))))
