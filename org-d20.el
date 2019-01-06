@@ -386,12 +386,14 @@ the best N of them, e.g., 4d6k3."
 
 ;;; helper functions
 
+;; convert a signed integer to a string term
 (defun org-d20--num-to-term (n)
   (let ((k (if (stringp n) (string-to-number n) n)))
     (if (>= k 0)
         (concat "+" (int-to-string k))
       (int-to-string k))))
 
+;; return the number or letter with which a monster name should be suffixed
 (defun org-d20--monster-number (n)
   (if (and org-d20-letter-monsters (>= 26 n))
       (seq-elt
@@ -400,6 +402,7 @@ the best N of them, e.g., 4d6k3."
        (- n 1))
     (int-to-string n)))
 
+;; concat b onto a as a signed term, where a is possibly empty
 (defun org-d20--rolls-concat (sign a b)
   (if (>= sign 0)
       (if (s-blank? a)
@@ -409,6 +412,7 @@ the best N of them, e.g., 4d6k3."
         (concat "- " b)
       (concat a " - " b))))
 
+;; bracket a number so it looks a bit like a dice roll result
 (defun org-d20--rolls-bracket (sides roll)
   (let ((roll* (int-to-string roll)))
     (cond ((= sides 4)
