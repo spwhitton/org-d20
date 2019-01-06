@@ -90,6 +90,8 @@ Rather than starting again for each type."
     map)
   "Keymap for function `org-d20-mode'.")
 
+(defvar org-d20-roll--last)
+
 ;;;###autoload
 (define-minor-mode org-d20-mode
   "Bind convenience functions for running a d20-like game in an
