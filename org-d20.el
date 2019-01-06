@@ -120,7 +120,7 @@ the best N of them, e.g., 4d6k3."
           (ours (let ((chopped (s-chop-prefix "-" exp)))
                   (if (string= (substring chopped 0 1) "d")
                       (concat "1" chopped) chopped)))
-          (split (seq-map #'string-to-int (s-split "[dk]" ours)))
+          (split (seq-map #'string-to-number (s-split "[dk]" ours)))
           (times (seq-elt split 0))
           (sides (ignore-errors (seq-elt split 1)))
           (keep (ignore-errors (seq-elt split 2)))
@@ -281,7 +281,7 @@ the best N of them, e.g., 4d6k3."
               (search-forward-regexp "[0-9]+")
               (skip-chars-backward "0-9")
               (replace-match
-               (int-to-string (1+ (string-to-int (match-string 0))))))
+               (int-to-string (1+ (string-to-number (match-string 0))))))
             (org-table-goto-line 2)
             (insert ">>>>")))
      while (save-excursion
@@ -296,13 +296,13 @@ the best N of them, e.g., 4d6k3."
     (org-table-goto-column 6)
     (skip-chars-forward " ")
     (when (looking-at "[0-9]+")
-      (let ((total-damage (+ dmg (string-to-int (match-string 0)))))
+      (let ((total-damage (+ dmg (string-to-number (match-string 0)))))
         (replace-match (int-to-string total-damage))
         (save-excursion
           (org-table-goto-column 5)
           (skip-chars-forward " ")
           (when (looking-at "[0-9]+")
-            (let ((max-hp (string-to-int (match-string 0))))
+            (let ((max-hp (string-to-number (match-string 0))))
               (if (>= total-damage max-hp)
                   (progn
                     (org-table-goto-column 2)
@@ -387,7 +387,7 @@ the best N of them, e.g., 4d6k3."
 ;;; helper functions
 
 (defun org-d20--num-to-term (n)
-  (let ((k (if (stringp n) (string-to-int n) n)))
+  (let ((k (if (stringp n) (string-to-number n) n)))
     (if (>= k 0)
         (concat "+" (int-to-string k))
       (int-to-string k))))
