@@ -2,6 +2,8 @@
 ----------------
 
 - Bug fix: off-by-one error in call to `random`
+  - This meant that the maximum value on a dice could never be
+    rolled.  Now monsters can critically hit players again.
 - Change default keybindings to match Emacs conventions
 
 - `org-d20-roll` shows the results on each dice rolled
