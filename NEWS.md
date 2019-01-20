@@ -16,6 +16,8 @@
 
 - Improve README for new users
 - Autoload some more functions users might want to bind
+- defcustoms now specify their types, making the customisation
+  interface more useful
 - Refactoring/cleanup
 
 0.2 (2018-12-31)

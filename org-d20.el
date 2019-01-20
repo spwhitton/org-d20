@@ -59,22 +59,26 @@
 A list of cons cells, where the car of each cell is a character's
 name, and the cdr of each cell is that character's initiative
 modifier as an integer."
+  :type '(alist :key-type string :value-type integer)
   :group 'org-d20)
 
 (defcustom org-d20-dice-sound nil
   "Path to a sound file that `play-sound-file' can play."
+  :type 'string
   :group 'org-d20)
 
 (defcustom org-d20-letter-monsters nil
   "Non-nil means individuate up to 26 monsters/NPCs with letters.
 
 Rather than with digits."
+  :type 'boolean
   :group 'org-d20)
 
 (defcustom org-d20-continue-monster-numbering nil
   "Non-nil means continue the numbering/lettering of monsters between types.
 
 Rather than starting again for each type."
+  :type 'boolean
   :group 'org-d20)
 
 (defvar org-d20-mode-map
