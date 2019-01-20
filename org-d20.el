@@ -131,9 +131,9 @@ the best N of them, e.g., 4d6k3."
         (let ((rolls*
                (org-d20--rolls-concat sign rolls (int-to-string times))))
           (cons rolls* (+ total (* sign times))))
-      (loop repeat times
-            do (let ((new-roll (1+ (random sides))))
-                 (push new-roll new-rolls)))
+      (cl-loop repeat times
+               do (let ((new-roll (1+ (random sides))))
+                    (push new-roll new-rolls)))
       (when keep
         ;; TODO: This should drop the items without reordering the
         ;;       list (spw 2019-01-05)
