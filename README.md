@@ -1,3 +1,5 @@
+[![MELPA](https://melpa.org/packages/org-d20-badge.svg)](https://melpa.org/#/org-d20) [![MELPA Stable](https://stable.melpa.org/packages/org-d20-badge.svg)](https://stable.melpa.org/#/org-d20)
+
 # org-d20 #
 
 ## Description ##
