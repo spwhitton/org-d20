@@ -31,8 +31,16 @@ other sets of house rules, are welcome.
 
 ## Installation ##
 
-Presently manual.  I hope to make org-d20 available from a popular
-online repository soon.
+You may copy [`org-d20.el`][] to somewhere in your `load-path` and
+simply
+
+    (autoload 'org-d20-mode "org-d20.el")
+
+or install from [MELPA][] (or MELPA stable).
+
+[MELPA]: http://melpa.org/
+
+[`org-d20.el`]: https://git.spwhitton.name/org-d20/tree/org-d20.el
 
 ## Usage ##
 
