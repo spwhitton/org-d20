@@ -1,0 +1,16 @@
+Source: org-d20
+Section: lisp
+Priority: optional
+Maintainer: Sean Whitton <spwhitton@spwhitton.name>
+Build-Depends: debhelper (>= 10),
+ dh-elpa
+Standards-Version: 4.1.5
+Homepage: https://spwhitton.name/tech/code/org-d20/
+
+Package: elpa-org-d20
+Architecture: all
+Depends: ${elpa:Depends}, ${misc:Depends}
+Recommends: emacs (>= 46.0)
+Enhances: emacs,
+ emacs25
+Description: minor mode for d20 tabletop roleplaying games 
