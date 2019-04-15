@@ -1,4 +1,4 @@
-0.3 (unreleased)
+0.3 (2019-04-15)
 ----------------
 
 - Bug fix: off-by-one error in call to `random`
