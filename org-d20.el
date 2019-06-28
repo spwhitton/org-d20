@@ -4,7 +4,7 @@
 
 ;; Author: Sean Whitton <spwhitton@spwhitton.name>
 ;; URL: https://spwhitton.name/tech/code/org-d20/
-;; Version: 0.3
+;; Version: 0.4
 ;; Package-Requires: ((s "1.11.0") (seq "2.19") (dash "2.12.0") (emacs "24"))
 ;; Keywords: outlines games
 
@@ -47,6 +47,7 @@
 (require 's)
 (require 'seq)
 (require 'dash)
+(require 'cl-lib)
 (require 'org-table)
 
 (defgroup org-d20 nil
@@ -224,7 +225,7 @@ the best N of them, e.g., 4d6k3."
   (interactive "*")
   (let ((rows))
     (let (name-input init-input hd-input num-input (monster 1))
-      (loop
+      (cl-loop
        do (setq name-input (read-string "Monster/NPC name (blank when done): "))
        (when (> (length name-input) 0)
          (setq init-input (read-string (concat name-input "'s init modifier: "))
@@ -276,7 +277,7 @@ the best N of them, e.g., 4d6k3."
   "Advance the turn tracker in an initiative table."
   (interactive "*")
   (when (org-at-table-p)
-    (loop
+    (cl-loop
      do (let* ((back (search-backward ">>>>" (org-table-begin) t))
                (forward (search-forward ">>>>" (org-table-end) t))
                (cur (if back back forward)))

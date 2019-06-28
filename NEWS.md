@@ -1,3 +1,8 @@
+0.4 (unreleased)
+----------------
+
+- Replace some calls to `loop` with calls to `cl-loop`.
+
 0.3 (2019-04-15)
 ----------------
 
