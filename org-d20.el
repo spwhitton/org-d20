@@ -107,6 +107,9 @@ Org-mode document."
 
 ;;; Dice rolling
 
+;; TODO: Also support '2d20kl1' to drop all but the lowest roll'
+;;       (spw 2020-04-16)
+
 (defun org-d20--roll (exp)
   "Evaluate dice roll expression EXP.
 
