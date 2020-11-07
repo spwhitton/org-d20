@@ -417,13 +417,17 @@ the best N of them, e.g., 4d6k3."
 
 ;; Concat b onto a as a signed term, where a is possibly empty
 (defun org-d20--rolls-concat (sign a b)
-  (if (>= sign 0)
-      (if (s-blank? a)
-          b
-        (concat a " + " b))
-    (if (s-blank? a)
-        (concat "- " b)
-      (concat a " - " b))))
+  (let (strings)
+    (if (or (null a) (string= "" a))
+	(unless (>= sign 0)
+	  (push " - " strings))
+      (push a strings)
+      (push (if (>= sign 0)
+		" + "
+	      " - ")
+	    strings))
+    (push b strings)
+    (apply #'concat (nreverse strings))))
 
 ;; Bracket a number so it looks a bit like a dice roll result
 (defun org-d20--rolls-bracket (sides roll)
