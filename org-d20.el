@@ -429,23 +429,15 @@ the best N of them, e.g., 4d6k3."
 
 ;; Bracket a number so it looks a bit like a dice roll result
 (defun org-d20--rolls-bracket (sides roll)
-  (let ((roll* (int-to-string roll)))
-    (cond ((= sides 4)
-           (concat "‹" roll* "›"))
-          ((= sides 6)
-           (concat "|" roll* "|"))
-          ((= sides 8)
-           (concat "/" roll* "/"))
-          ((= sides 10)
-           (concat "{" roll* "}"))
-          ((= sides 12)
-           (concat "⟨" roll* "⟩"))
-          ((= sides 20)
-           (concat "(" roll* ")"))
-          ((= sides 100)
-           (concat "«" roll* "»"))
-          (t
-           (concat "[" roll* "]")))))
+  (let ((brackets (or (assoc sides '((4 "‹" "›")
+				     (6 "|" "|")
+				     (8 "/" "/")
+				     (10 "{" "}")
+				     (12 "⟨" "⟩")
+				     (20 "(" ")")
+				     (100 "«" "»")))
+		      '(nil "[" "]"))))
+    (concat (cadr brackets) (int-to-string roll) (caddr brackets))))
 
 (defun org-d20--org-table-end-of-current-cell-content ()
   "Move point to the end of the content of the current Org table cell."
