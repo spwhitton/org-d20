@@ -411,10 +411,8 @@ the best N of them, e.g., 4d6k3."
 ;; Return the number or letter with which a monster name should be suffixed
 (defun org-d20--monster-number (n)
   (if (and org-d20-letter-monsters (>= 26 n))
-      (seq-elt
-       (list "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M"
-             "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z")
-       (1- n))
+      (nth (1- n) '("A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M"
+		    "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z"))
     (int-to-string n)))
 
 ;; Concat b onto a as a signed term, where a is possibly empty
