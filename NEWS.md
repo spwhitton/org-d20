@@ -2,6 +2,7 @@
 ----------------
 
 - Replace some calls to `loop` with calls to `cl-loop`.
+- Other code cleanup.
 
 0.3 (2019-04-15)
 ----------------
