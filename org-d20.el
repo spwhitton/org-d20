@@ -467,7 +467,12 @@ the best N of them, e.g., 4d6k3."
 		  (goto-char (point-max))
 		  (beginning-of-line)
 		  (recenter -1)
-		  (redisplay))))
+		  ;; without the following line, the dice roll doesn't show up
+		  ;; until `play-sound-file' has finished
+		  (redisplay)
+		  ;; and without this line, the split window appears selected
+		  ;; even when it isn't
+		  (redraw-frame))))
       (if-let ((window (get-buffer-window "*Dice Trail*")))
 	  (when (window-parameter window 'org-d20--dice-trail-split)
 	    (scroll window))
