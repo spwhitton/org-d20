@@ -104,7 +104,6 @@ Org-mode document."
   :lighter " d20")
 
 
-
 ;;; Dice rolling
 
 ;; TODO: Also support '2d20kl1' to drop all but the lowest roll'
@@ -220,7 +219,6 @@ the best N of them, e.g., 4d6k3."
     (play-sound-file org-d20-dice-sound)))
 
 
-
 ;;; Combat tracking
 
 (defun org-d20-initiative ()
@@ -398,7 +396,6 @@ the best N of them, e.g., 4d6k3."
     (org-d20-initiative)))
 
 
-
 ;;; helper functions
 
 ;; Convert a signed integer to a string term
