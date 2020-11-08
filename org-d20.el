@@ -82,6 +82,11 @@ Rather than starting again for each type."
   :type 'boolean
   :group 'org-d20)
 
+(defcustom org-d20-display-rolls-buffer nil
+  "Non-nil means split the window and display history of dice rolls."
+  :type 'boolean
+  :group 'org-d20)
+
 (defvar org-d20-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c , i") #'org-d20-initiative-dwim)
@@ -186,8 +191,8 @@ the best N of them, e.g., 4d6k3."
                     (frame-width))
                    (s-replace " " "" rolls)
                  rolls)))
-          (message "%s = %s = %s" exp rolls-display result*))
-      (message "%s = %s" exp (int-to-string result))))
+          (org-d20--record-roll "%s = %s = %s" exp rolls-display result*))
+      (org-d20--record-roll "%s = %s" exp (int-to-string result))))
   (when org-d20-dice-sound
     (play-sound-file org-d20-dice-sound)))
 
@@ -213,8 +218,8 @@ the best N of them, e.g., 4d6k3."
          (disadv (if (<= fst snd)
                      (concat (propertize fst* 'face 'bold) "  " snd*)
                    (concat fst* "  " (propertize snd* 'face 'bold)))))
-    (message "No adv./disadv.:  %s\tAdv.:  %s\tDisadv.:  %s"
-             fst* adv disadv))
+    (org-d20--record-roll "No adv./disadv.:  %s\tAdv.:  %s\tDisadv.:  %s"
+			  fst* adv disadv))
   (when org-d20-dice-sound
     (play-sound-file org-d20-dice-sound)))
 
@@ -447,6 +452,31 @@ the best N of them, e.g., 4d6k3."
 ;; Roll a d20, adding or subtracting a modifier
 (defun org-d20--d20-plus (&optional mod)
   (+ 1 mod (random 20)))
+
+;; Record and display a new dice roll result
+(defun org-d20--record-roll (&rest args)
+  (let ((roll (apply #'format args)))
+    (with-current-buffer (get-buffer-create "*Dice Trail*")
+      (setq-local require-final-newline nil)
+      (goto-char (point-max))
+      (unless (bolp)
+	(insert "\n"))
+      (insert "  " roll))
+    (cl-flet ((scroll (window)
+		(with-selected-window window
+		  (goto-char (point-max))
+		  (beginning-of-line)
+		  (recenter -1)
+		  (redisplay))))
+      (if-let ((window (get-buffer-window "*Dice Trail*")))
+	  (when (window-parameter window 'org-d20--dice-trail-split)
+	    (scroll window))
+	(if (and org-d20-mode org-d20-display-rolls-buffer)
+	    (let ((window (split-window nil -8 'below)))
+	      (set-window-buffer window "*Dice Trail*")
+	      (set-window-parameter window 'org-d20--dice-trail-split t)
+	      (scroll window))
+	  (message roll))))))
 
 (provide 'org-d20)
 ;;; org-d20.el ends here

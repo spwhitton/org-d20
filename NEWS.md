@@ -1,6 +1,7 @@
 0.4 (unreleased)
 ----------------
 
+- New defcustom, `org-d20-display-rolls-buffer`.
 - Replace some calls to `loop` with calls to `cl-loop`.
 - Other code cleanup.
 
