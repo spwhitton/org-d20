@@ -210,16 +210,25 @@ the best N of them, e.g., 4d6k3."
   (interactive)
   (let* ((fst (cdr (org-d20--roll "1d20")))
          (snd (cdr (org-d20--roll "1d20")))
+	 (bls (cdr (org-d20--roll "1d4")))
          (fst* (int-to-string fst))
          (snd* (int-to-string snd))
+	 (bls* (int-to-string bls))
          (adv (if (>= fst snd)
                   (concat (propertize fst* 'face 'bold) "  " snd*)
                 (concat fst* "  " (propertize snd* 'face 'bold))))
          (disadv (if (<= fst snd)
                      (concat (propertize fst* 'face 'bold) "  " snd*)
                    (concat fst* "  " (propertize snd* 'face 'bold)))))
-    (org-d20--record-roll "No adv./disadv.:  %s\tAdv.:  %s\tDisadv.:  %s"
-			  fst* adv disadv))
+    (org-d20--record-roll
+     "No adv./disadv.:  %s%sAdv.:  %s%sDisadv.:  %s%sBless:  %s"
+     fst*
+     (make-string (- 4 (length fst*)) ?\ )
+     adv
+     (make-string (- 8 (length adv)) ?\ )
+     disadv
+     (make-string (- 10 (length disadv)) ?\ )
+     bls*))
   (when org-d20-dice-sound
     (play-sound-file org-d20-dice-sound)))
 
