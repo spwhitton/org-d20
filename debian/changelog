@@ -1,3 +1,9 @@
+org-d20 (0.4-1~athena1) buster; urgency=medium
+
+  * Rebuild for athena's apt repository.
+
+ -- Sean Whitton <spwhitton@spwhitton.name>  Tue, 29 Dec 2020 12:22:59 -0700
+
 org-d20 (0.3-1~athena1) buster; urgency=medium
 
   * packaging for athena's apt repo
