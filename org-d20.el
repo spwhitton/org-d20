@@ -4,7 +4,7 @@
 
 ;; Author: Sean Whitton <spwhitton@spwhitton.name>
 ;; URL: https://spwhitton.name/tech/code/org-d20/
-;; Version: 0.3
+;; Version: 0.4
 ;; Package-Requires: ((s "1.11.0") (seq "2.19") (dash "2.12.0") (emacs "24"))
 ;; Keywords: outlines games
 
@@ -47,6 +47,7 @@
 (require 's)
 (require 'seq)
 (require 'dash)
+(require 'cl-lib)
 (require 'org-table)
 
 (defgroup org-d20 nil
@@ -81,6 +82,11 @@ Rather than starting again for each type."
   :type 'boolean
   :group 'org-d20)
 
+(defcustom org-d20-display-rolls-buffer nil
+  "Non-nil means split the window and display history of dice rolls."
+  :type 'boolean
+  :group 'org-d20)
+
 (defvar org-d20-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c , i") #'org-d20-initiative-dwim)
@@ -103,8 +109,10 @@ Org-mode document."
   :lighter " d20")
 
 
-
 ;;; Dice rolling
+
+;; TODO: Also support '2d20kl1' to drop all but the lowest roll'
+;;       (spw 2020-04-16)
 
 (defun org-d20--roll (exp)
   "Evaluate dice roll expression EXP.
@@ -183,8 +191,8 @@ the best N of them, e.g., 4d6k3."
                     (frame-width))
                    (s-replace " " "" rolls)
                  rolls)))
-          (message "%s = %s = %s" exp rolls-display result*))
-      (message "%s = %s" exp (int-to-string result))))
+          (org-d20--record-roll "%s = %s = %s" exp rolls-display result*))
+      (org-d20--record-roll "%s = %s" exp (int-to-string result))))
   (when org-d20-dice-sound
     (play-sound-file org-d20-dice-sound)))
 
@@ -202,21 +210,29 @@ the best N of them, e.g., 4d6k3."
   (interactive)
   (let* ((fst (cdr (org-d20--roll "1d20")))
          (snd (cdr (org-d20--roll "1d20")))
+	 (bls (cdr (org-d20--roll "1d4")))
          (fst* (int-to-string fst))
          (snd* (int-to-string snd))
+	 (bls* (int-to-string bls))
          (adv (if (>= fst snd)
                   (concat (propertize fst* 'face 'bold) "  " snd*)
                 (concat fst* "  " (propertize snd* 'face 'bold))))
          (disadv (if (<= fst snd)
                      (concat (propertize fst* 'face 'bold) "  " snd*)
                    (concat fst* "  " (propertize snd* 'face 'bold)))))
-    (message "No adv./disadv.:  %s\tAdv.:  %s\tDisadv.:  %s"
-             fst* adv disadv))
+    (org-d20--record-roll
+     "No adv./disadv.:  %s%sAdv.:  %s%sDisadv.:  %s%sBless:  %s"
+     fst*
+     (make-string (- 4 (length fst*)) ?\ )
+     adv
+     (make-string (- 8 (length adv)) ?\ )
+     disadv
+     (make-string (- 10 (length disadv)) ?\ )
+     bls*))
   (when org-d20-dice-sound
     (play-sound-file org-d20-dice-sound)))
 
 
-
 ;;; Combat tracking
 
 (defun org-d20-initiative ()
@@ -224,7 +240,7 @@ the best N of them, e.g., 4d6k3."
   (interactive "*")
   (let ((rows))
     (let (name-input init-input hd-input num-input (monster 1))
-      (loop
+      (cl-loop
        do (setq name-input (read-string "Monster/NPC name (blank when done): "))
        (when (> (length name-input) 0)
          (setq init-input (read-string (concat name-input "'s init modifier: "))
@@ -276,7 +292,7 @@ the best N of them, e.g., 4d6k3."
   "Advance the turn tracker in an initiative table."
   (interactive "*")
   (when (org-at-table-p)
-    (loop
+    (cl-loop
      do (let* ((back (search-backward ">>>>" (org-table-begin) t))
                (forward (search-forward ">>>>" (org-table-end) t))
                (cur (if back back forward)))
@@ -394,7 +410,6 @@ the best N of them, e.g., 4d6k3."
     (org-d20-initiative)))
 
 
-
 ;;; helper functions
 
 ;; Convert a signed integer to a string term
@@ -407,41 +422,35 @@ the best N of them, e.g., 4d6k3."
 ;; Return the number or letter with which a monster name should be suffixed
 (defun org-d20--monster-number (n)
   (if (and org-d20-letter-monsters (>= 26 n))
-      (seq-elt
-       (list "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M"
-             "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z")
-       (1- n))
+      (nth (1- n) '("A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M"
+		    "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z"))
     (int-to-string n)))
 
 ;; Concat b onto a as a signed term, where a is possibly empty
 (defun org-d20--rolls-concat (sign a b)
-  (if (>= sign 0)
-      (if (s-blank? a)
-          b
-        (concat a " + " b))
-    (if (s-blank? a)
-        (concat "- " b)
-      (concat a " - " b))))
+  (let (strings)
+    (if (or (null a) (string= "" a))
+	(unless (>= sign 0)
+	  (push " - " strings))
+      (push a strings)
+      (push (if (>= sign 0)
+		" + "
+	      " - ")
+	    strings))
+    (push b strings)
+    (apply #'concat (nreverse strings))))
 
 ;; Bracket a number so it looks a bit like a dice roll result
 (defun org-d20--rolls-bracket (sides roll)
-  (let ((roll* (int-to-string roll)))
-    (cond ((= sides 4)
-           (concat "‹" roll* "›"))
-          ((= sides 6)
-           (concat "|" roll* "|"))
-          ((= sides 8)
-           (concat "/" roll* "/"))
-          ((= sides 10)
-           (concat "{" roll* "}"))
-          ((= sides 12)
-           (concat "⟨" roll* "⟩"))
-          ((= sides 20)
-           (concat "(" roll* ")"))
-          ((= sides 100)
-           (concat "«" roll* "»"))
-          (t
-           (concat "[" roll* "]")))))
+  (let ((brackets (or (assoc sides '((4 "‹" "›")
+				     (6 "|" "|")
+				     (8 "/" "/")
+				     (10 "{" "}")
+				     (12 "⟨" "⟩")
+				     (20 "(" ")")
+				     (100 "«" "»")))
+		      '(nil "[" "]"))))
+    (concat (cadr brackets) (int-to-string roll) (caddr brackets))))
 
 (defun org-d20--org-table-end-of-current-cell-content ()
   "Move point to the end of the content of the current Org table cell."
@@ -452,6 +461,36 @@ the best N of them, e.g., 4d6k3."
 ;; Roll a d20, adding or subtracting a modifier
 (defun org-d20--d20-plus (&optional mod)
   (+ 1 mod (random 20)))
+
+;; Record and display a new dice roll result
+(defun org-d20--record-roll (&rest args)
+  (let ((roll (apply #'format args)))
+    (with-current-buffer (get-buffer-create "*Dice Trail*")
+      (setq-local require-final-newline nil)
+      (goto-char (point-max))
+      (unless (bolp)
+	(insert "\n"))
+      (insert "  " roll))
+    (cl-flet ((scroll (window)
+		(with-selected-window window
+		  (goto-char (point-max))
+		  (beginning-of-line)
+		  (recenter -1)
+		  ;; without the following line, the dice roll doesn't show up
+		  ;; until `play-sound-file' has finished
+		  (redisplay)
+		  ;; and without this line, the split window appears selected
+		  ;; even when it isn't
+		  (redraw-frame))))
+      (if-let ((window (get-buffer-window "*Dice Trail*")))
+	  (when (window-parameter window 'org-d20--dice-trail-split)
+	    (scroll window))
+	(if (and org-d20-mode org-d20-display-rolls-buffer)
+	    (let ((window (split-window nil -8 'below)))
+	      (set-window-buffer window "*Dice Trail*")
+	      (set-window-parameter window 'org-d20--dice-trail-split t)
+	      (scroll window))
+	  (message roll))))))
 
 (provide 'org-d20)
 ;;; org-d20.el ends here

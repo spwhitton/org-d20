@@ -1,3 +1,11 @@
+0.4 (2020-12-29)
+----------------
+
+- New defcustom, `org-d20-display-rolls-buffer`.
+- `org-d20-d20` shows the result of rolling a d4 in case /Bless/ is active.
+- Replace some calls to `loop` with calls to `cl-loop`.
+- Other code cleanup.
+
 0.3 (2019-04-15)
 ----------------
 
