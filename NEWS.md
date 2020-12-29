@@ -1,4 +1,4 @@
-0.4 (unreleased)
+0.4 (2020-12-29)
 ----------------
 
 - New defcustom, `org-d20-display-rolls-buffer`.
