@@ -1,0 +1,5 @@
+org-d20 (0.4-1) unstable; urgency=medium
+
+  * Initial release (Closes: #982165).
+
+ -- Sean Whitton <spwhitton@spwhitton.name>  Sat, 06 Feb 2021 22:42:18 -0700
