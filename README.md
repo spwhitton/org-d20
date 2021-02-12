@@ -31,8 +31,9 @@ other sets of house rules, are welcome.
 
 ## Installation ##
 
-You may copy [`org-d20.el`][] to somewhere in your `load-path` and
-simply
+Users of Debian 12 or later or Ubuntu 21.04 or later can use `apt-get install
+elpa-org-d20`.  Otherwise, you may copy [`org-d20.el`][] to somewhere in your
+`load-path` and simply
 
     (autoload 'org-d20-mode "org-d20.el")
 

@@ -2,6 +2,7 @@
 ----------------
 
 - Add missing (require 'subr-x).
+- Note apt-get installation option in README.md.
 
 0.4 (2020-12-29)
 ----------------
