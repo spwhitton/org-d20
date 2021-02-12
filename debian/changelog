@@ -1,3 +1,9 @@
+org-d20 (0.5-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Sean Whitton <spwhitton@spwhitton.name>  Thu, 11 Feb 2021 18:42:46 -0700
+
 org-d20 (0.4-1) unstable; urgency=medium
 
   * Initial release (Closes: #982165).

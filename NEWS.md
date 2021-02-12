@@ -1,4 +1,4 @@
-0.5 (unreleased)
+0.5 (2021-02-11)
 ----------------
 
 - Add missing (require 'subr-x).
