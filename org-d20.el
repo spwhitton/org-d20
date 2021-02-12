@@ -4,7 +4,7 @@
 
 ;; Author: Sean Whitton <spwhitton@spwhitton.name>
 ;; URL: https://spwhitton.name/tech/code/org-d20/
-;; Version: 0.4
+;; Version: 0.5
 ;; Package-Requires: ((s "1.11.0") (seq "2.19") (dash "2.12.0") (emacs "24"))
 ;; Keywords: outlines games
 
@@ -48,6 +48,7 @@
 (require 'seq)
 (require 'dash)
 (require 'cl-lib)
+(require 'subr-x)
 (require 'org-table)
 
 (defgroup org-d20 nil
