@@ -362,53 +362,53 @@ the best N of them, e.g., 4d6k3."
       (let* ((name-input (read-string "Monster/NPC name: "))
              (init-input (read-number (concat name-input "'s init modifier: ")))
              (hd-input (read-string (concat name-input "'s hit points: ")))
-             (num-input
-              (cdr (org-d20--roll
-                    (read-string (concat "How many " name-input "? ")))))
-             (monster 1))
-        ;; First, if we need to, try to count the number of monsters.
-        ;; We can only use a crude heuristic here because we don't
-        ;; know what kind of things the user might have added to the
-        ;; table
-        (when org-d20-continue-monster-numbering
-          (save-excursion
-            (org-table-goto-line 1)
-            (while (org-table-goto-line (1+ (org-table-current-line)))
-              (org-table-goto-column 2)
-              (when (looking-at "[^|]+ \\([A-Z]\\|[0-9]+\\)~? *|")
-                (setq monster (1+ monster))))))
-        (save-excursion
-          ;; Ensure we're not on header row (following won't go past end
-          ;; of table)
-          (org-table-goto-line (1+ (org-table-current-line)))
-          (org-table-goto-line (1+ (org-table-current-line)))
-          (let ((init (int-to-string
-                       (org-d20--d20-plus (string-to-number init-input))))
-                (monsters-left num-input))
-            (while (>= monsters-left 1)
-              ;; Open a new row and then immediately move it downwards
-              ;; to ensure that the monsters on the same initiative
-              ;; count are numbered/lettered in ascending order
-              (org-table-insert-row)
-              (org-table-move-row)
-              (org-table-next-field)
-              (insert name-input)
-              (insert " ")
-              (insert (org-d20--monster-number monster))
-              (org-table-next-field)
-              (insert (org-d20--num-to-term init-input))
-              (org-table-next-field)
-              (insert init)
-              (org-table-next-field)
-              (insert (int-to-string (cdr (org-d20--roll hd-input))))
-              (org-table-next-field)
-              (insert "0")
-              (setq monsters-left (1- monsters-left)
-                    monster (1+ monster))))
-          (org-table-goto-column 4)
-          (org-table-sort-lines nil ?N)
-          (org-table-align)))
+             (num-input (read-string (concat "How many " name-input "? "))))
+        (org-d20--initiative-add-records name-input init-input hd-input num-input))
     (org-d20-initiative)))
+
+(defun org-d20--initiative-add-records (name init-mod hd num)
+  (let ((monster 1))
+    ;; First, if we need to, try to count the number of monsters.
+    ;; We can only use a crude heuristic here because we don't
+    ;; know what kind of things the user might have added to the
+    ;; table
+    (when org-d20-continue-monster-numbering
+      (save-excursion
+        (org-table-goto-line 1)
+        (while (org-table-goto-line (1+ (org-table-current-line)))
+          (org-table-goto-column 2)
+          (when (looking-at "[^|]+ \\([A-Z]\\|[0-9]+\\)~? *|")
+            (setq monster (1+ monster))))))
+    (save-excursion
+      ;; Ensure we're not on header row (following won't go past end
+      ;; of table)
+      (org-table-goto-line (1+ (org-table-current-line)))
+      (org-table-goto-line (1+ (org-table-current-line)))
+      (let ((init (int-to-string (org-d20--d20-plus init-mod)))
+            (monsters-left (cdr (org-d20--roll num))))
+        (while (>= monsters-left 1)
+          ;; Open a new row and then immediately move it downwards
+          ;; to ensure that the monsters on the same initiative
+          ;; count are numbered/lettered in ascending order
+          (org-table-insert-row)
+          (org-table-move-row)
+          (org-table-next-field)
+          (insert name)
+          (insert " ")
+          (insert (org-d20--monster-number monster))
+          (org-table-next-field)
+          (insert (org-d20--num-to-term init-mod))
+          (org-table-next-field)
+          (insert init)
+          (org-table-next-field)
+          (insert (int-to-string (cdr (org-d20--roll hd))))
+          (org-table-next-field)
+          (insert "0")
+          (setq monsters-left (1- monsters-left)
+                monster (1+ monster))))
+      (org-table-goto-column 4)
+      (org-table-sort-lines nil ?N)
+      (org-table-align))))
 
 
 ;;; helper functions
