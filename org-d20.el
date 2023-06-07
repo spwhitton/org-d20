@@ -360,7 +360,7 @@ the best N of them, e.g., 4d6k3."
   (interactive "*" org-mode)
   (if (org-at-table-p)
       (let* ((name-input (read-string "Monster/NPC name: "))
-             (init-input (read-string (concat name-input "'s init modifier: ")))
+             (init-input (read-number (concat name-input "'s init modifier: ")))
              (hd-input (read-string (concat name-input "'s hit points: ")))
              (num-input
               (cdr (org-d20--roll
