@@ -357,7 +357,7 @@ the best N of them, e.g., 4d6k3."
 
 (defun org-d20-initiative-add ()
   "Add a monster to an existing combat."
-  (interactive "*")
+  (interactive "*" org-mode)
   (if (org-at-table-p)
       (let* ((name-input (read-string "Monster/NPC name: "))
              (init-input (read-string (concat name-input "'s init modifier: ")))
