@@ -1,3 +1,10 @@
+0.6 (2024-07-26)
+----------------
+
+- Add org-mode to org-d20-initiative-add interactive spec.
+- Ensure we read numbers for initiative modifiers.
+- Some refactoring.
+
 0.5 (2021-02-11)
 ----------------
 

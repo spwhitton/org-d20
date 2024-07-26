@@ -1,3 +1,9 @@
+org-d20 (0.6-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Sean Whitton <spwhitton@spwhitton.name>  Fri, 26 Jul 2024 11:54:53 +0900
+
 org-d20 (0.5-1) unstable; urgency=medium
 
   * New upstream release.
