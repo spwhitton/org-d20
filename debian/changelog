@@ -1,3 +1,9 @@
+org-d20 (0.6-2) unstable; urgency=medium
+
+  * Rebuild against dh-elpa 2.1.7.
+
+ -- Sean Whitton <spwhitton@spwhitton.name>  Sun, 02 Mar 2025 15:03:34 +0800
+
 org-d20 (0.6-1) unstable; urgency=medium
 
   * New upstream release.
